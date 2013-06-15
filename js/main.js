@@ -75,7 +75,6 @@ window.cancelRequestAnimFrame = (function () {
     };
 
     window.addEventListener("keydown", function (evt) {
-        console.log(evt.keyCode);
         input.keys[evt.keyCode] = true;
         input.keyCount[evt.keyCode]++;
     }, true);
@@ -113,6 +112,20 @@ window.cancelRequestAnimFrame = (function () {
     window["input"] = input;
 
 })();
+
+/*
+    // Export shortcuts of box2d into global space
+    window.b2Vec2 = Box2D.Common.Math.b2Vec2;
+    window.b2BodyDef = Box2D.Dynamics.b2BodyDef;
+    window.b2Body = Box2D.Dynamics.b2Body;
+    window.b2FixtureDef = Box2D.Dynamics.b2FixtureDef;
+    window.b2Fixture = Box2D.Dynamics.b2Fixture;
+    window.b2World = Box2D.Dynamics.b2World;
+    window.b2MassData = Box2D.Collision.Shapes.b2MassData;
+    window.b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
+    window.b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
+    window.b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
+*/
 
 var b2Vec2 = Box2D.Common.Math.b2Vec2,
     b2AABB = Box2D.Collision.b2AABB,
