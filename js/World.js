@@ -132,16 +132,17 @@ define([
 
 			// update acmera Z coordinate softly
 			var cameraTargetZ = -15 - (velmodule * 0.02);
-			var cameraSpeed = Math.abs(cameraTargetZ - this.camera.position.z) * 0.2;
+			var cameraSpeed = Math.abs(cameraTargetZ - this.camera.position.z) * 0.1;
 			if (this.camera.position.z < cameraTargetZ) {
-				this.camera.position.z += cameraSpeed;
+				this.camera.position.z += cameraSpeed * 0.5;
 			} else {
-				this.camera.position.z -= cameraSpeed;
+				this.camera.position.z -= cameraSpeed * 0.5;
 			}
 
 			// output some debug on SPACE
 			if (input.getKeyDown(input.keyCode.SPACE)) {
-				console.log(this.car.carBody);
+				// console.log(this.car.carBody);
+				console.log(this.b2world.m_debugDraw.m_sprite);
 			}
 	    };
 
@@ -149,14 +150,10 @@ define([
 
 	    	this.renderer.render(this.scene, this.camera);
 
-
 	    	// render debug physics output
-	    	this.contextDebug.save();
 	    	var pos = this.car.carBody.GetPosition();
 	    	var offsetx = pos.x * box2dConfig.PixelToMeter / 2 - 100;
-	    	this.contextDebug.translate(-offsetx, 0);
-	    	this.b2world.DrawDebugData();
-	    	this.contextDebug.restore();
+	    	this.b2world.DrawDebugData(-offsetx, 0);
 	    };
 
 	}
