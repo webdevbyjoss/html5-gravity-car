@@ -13,8 +13,8 @@ define(function(){
         this.spring2 = null;
 
         // motor 
-        var speed = 15;
-        var torque = 3500;
+        var speed = 10;
+        var torque = 2000;
 
 
   	    var fixDef = Object.create(this.world.fixDef);
@@ -28,9 +28,9 @@ define(function(){
   	    var bodyDef = new b2BodyDef;
 
         //create car body
-        fixDef.density = 50;
-        fixDef.friction = 10;
-        fixDef.restitution = 0;
+        fixDef.density = 100;
+        fixDef.friction = 0.3;
+        fixDef.restitution = 0.1;
         fixDef.shape = new b2PolygonShape();
         fixDef.shape.SetAsBox(data.w * 0.5, data.h * 0.5);
 
@@ -52,9 +52,11 @@ define(function(){
         localX = (data.wheelRadius * 1.5 - data.w * 0.5);
         localY = data.h * 0.4;
         anchor = this.carBody.GetWorldPoint(new b2Vec2(localX, localY));
-        fixDef.density = 100;
-        fixDef.friction = 100;
-        fixDef.restitution = 0.3;
+
+        fixDef = Object.create(this.world.fixDef);
+        fixDef.density = 15;
+        fixDef.friction = 10;
+        fixDef.restitution = 1.5;
         fixDef.shape = new b2CircleShape(data.wheelRadius);
         bodyDef.position.Set(anchor.x, anchor.y);
         this.wheel1 = this.world.b2world.CreateBody(bodyDef);

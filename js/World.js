@@ -128,10 +128,10 @@ define([
 			var velmodule = vel.x * vel.x + vel.y * vel.y;
 
 			this.camera.position.x = pos.x + 5;
-			this.camera.position.y = pos.y - 5;
+			this.camera.position.y = pos.y - 2;
 
 			// update acmera Z coordinate softly
-			var cameraTargetZ = -15 - (velmodule * 0.02);
+			var cameraTargetZ = -10 - (velmodule * 0.02);
 			var cameraSpeed = Math.abs(cameraTargetZ - this.camera.position.z) * 0.1;
 			if (this.camera.position.z < cameraTargetZ) {
 				this.camera.position.z += cameraSpeed * 0.5;
