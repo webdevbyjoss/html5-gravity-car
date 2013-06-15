@@ -47,7 +47,7 @@ window.cancelRequestAnimFrame = (function () {
         ARROW_UP: 38,
         ARROW_DOWN: 40,
         // action keys
-        SPASE: 32,
+        SPACE: 32,
         ENTER: 13,
         BACKSPACE: 8,
         SHIFT: 16,

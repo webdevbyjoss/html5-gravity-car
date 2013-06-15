@@ -41,24 +41,36 @@ define([
 
 	    // default fixture values
 	    this.fixDef = new b2FixtureDef;
-	    this.fixDef.density = 10.0;
-	    this.fixDef.friction = 3;
-	    this.fixDef.restitution = 0.1;
+	    this.fixDef.density = 1000.0;
+	    this.fixDef.friction = 1;
+	    this.fixDef.restitution = 0;
 
 		var platforms = [{
+			pos: {x: -15, y: 17},
+			box: {w: 2, h: 0.5},
+			angle: -Math.PI / 2
+		},{
+			pos: {x: -5, y: 18.62},
+			box: {w: 10, h: 0.5},
+			angle: Math.PI/80
+		}, {
 			pos: {x: 12, y: 19},
 			box: {w: 10, h: 0.5}
 		}, {
-			pos: {x: 22, y: 18.3},
+			pos: {x: 23.5, y: 18.3},
 			box: {w: 2, h: 0.5},
 			angle: -Math.PI/8
 		},{
-			pos: {x: 30, y: 18},
+			pos: {x: 30, y: 18.35},
 			box: {w: 5, h: 0.5},
 			angle: Math.PI/20
 		}, {
-			pos: {x: 53, y: 19},
-			box: {w: 17, h: 0.5}
+			pos: {x: 64, y: 19},
+			box: {w: 30, h: 0.5}
+		}, {
+			pos: {x: 95, y: 18.5},
+			box: {w: 2, h: 0.5},
+			angle: -Math.PI / 2
 		}];
 
 		this.ground = [];
@@ -111,12 +123,25 @@ define([
 
 	    	// update camera position according to car body
 	    	var pos =  this.car.carBody.GetPosition();
-			this.camera.position.x = pos.x + 5;
-			this.camera.position.y = pos.y - 3 - (pos.x * 0.05);
-			this.camera.position.z = -15 - (pos.x * 0.2);
 
-			if (input.getKeyDown(input.keyCode.SPASE)) {
-				console.log(this.car.carBody)
+			var vel = this.car.carBody.GetLinearVelocity();
+			var velmodule = vel.x * vel.x + vel.y * vel.y;
+
+			this.camera.position.x = pos.x + 5;
+			this.camera.position.y = pos.y - 5;
+
+			// update acmera Z coordinate softly
+			var cameraTargetZ = -15 - (velmodule * 0.02);
+			var cameraSpeed = Math.abs(cameraTargetZ - this.camera.position.z) * 0.2;
+			if (this.camera.position.z < cameraTargetZ) {
+				this.camera.position.z += cameraSpeed;
+			} else {
+				this.camera.position.z -= cameraSpeed;
+			}
+
+			// output some debug on SPACE
+			if (input.getKeyDown(input.keyCode.SPACE)) {
+				console.log(this.car.carBody);
 			}
 	    };
 
