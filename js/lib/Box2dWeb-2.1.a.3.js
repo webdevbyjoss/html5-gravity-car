@@ -5982,11 +5982,23 @@ Box2D.postDefs = [];
          body.m_torque = 0.0;
       }
    }
-   b2World.prototype.DrawDebugData = function () {
+   b2World.prototype.DrawDebugData = function (offsetx, offsety) {
       if (this.m_debugDraw == null) {
          return;
       }
       this.m_debugDraw.m_sprite.graphics.clear();
+      
+      // allow coordinate offset
+      var ctx = this.m_debugDraw.m_ctx;
+      ctx.save();
+      if (!offsetx) {
+         offsetx = 0
+      }
+      if (!offsety) {
+         offsety = 0;
+      }
+      ctx.translate(offsetx, offsety);
+
       var flags = this.m_debugDraw.GetFlags();
       var i = 0;
       var b;
@@ -6081,6 +6093,8 @@ Box2D.postDefs = [];
             this.m_debugDraw.DrawTransform(xf);
          }
       }
+
+      ctx.restore();
    }
    b2World.prototype.QueryAABB = function (callback, aabb) {
       var __this = this;
