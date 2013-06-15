@@ -1,22 +1,41 @@
 define(function(){
-	return function(world) {
+	return function(world, data) {
+		
 		this.world = world;
 
-	    var bodyDef = new b2BodyDef;
-	    bodyDef.type = b2Body.b2_staticBody;
-	    bodyDef.position.x = 8;
-	    bodyDef.position.y = 19;
-
+		// build fixture
 	    var fixDef = Object.create(this.world.fixDef);
 	    fixDef.shape = new b2PolygonShape;
-	    fixDef.shape.SetAsBox(7, 0.5);
-	    
-	    var platform1 = this.world.b2world.CreateBody(bodyDef)
-	    platform1.CreateFixture(fixDef);
+	    fixDef.shape.SetAsBox(data.box.w, data.box.h);
+	   
+		// build physical body according to data
+	    var bodyDef = new b2BodyDef;
+	    bodyDef.type = b2Body.b2_staticBody;
+	    bodyDef.position.x = data.pos.x;
+	    bodyDef.position.y = data.pos.y;
+	    if (data.angle) {
+	    	bodyDef.angle = data.angle;
+	    }
 
-	    bodyDef.position.x = 15;
-	    fixDef.shape.SetAsOrientedBox(5, 0.5, new b2Vec2(5, -1), -Math.PI/16);
-	    var platform2 = this.world.b2world.CreateBody(bodyDef);
-	    platform2.CreateFixture(fixDef);
+	    this.obj = this.world.b2world.CreateBody(bodyDef);
+	    this.fixture = this.obj.CreateFixture(fixDef);
+
+	    // build visual representation
+	   	var geometry = new THREE.CubeGeometry(data.box.w * 2, data.box.h * 2, 3);
+		var material = new THREE.MeshLambertMaterial( { color: 0x75A3FF } );
+		var cube = new THREE.Mesh( geometry, material );
+		world.scene.add( cube );
+
+		// as platforms are never moved for now 
+		// we can set the positions only once
+		this.bodyDef2 = this.fixture.GetBody().GetDefinition();
+		cube.position.x = this.bodyDef2.position.x;
+		cube.position.y = this.bodyDef2.position.y;
+		cube.rotation.z = this.bodyDef2.angle;
+
+		// console.log(this.bodyDef2);
+		this.update = function() {
+			// DO NOTHING FOR NOW
+		}
 	}
 })
