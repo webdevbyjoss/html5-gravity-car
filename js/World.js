@@ -151,8 +151,10 @@ define([
 	    	this.renderer.render(this.scene, this.camera);
 
 	    	// render debug physics output
+	    	var pixelToMeter = 30;
+	    	
 	    	var pos = this.car.carBody.GetPosition();
-	    	var offsetx = pos.x * box2dConfig.PixelToMeter / 2 - 100;
+	    	var offsetx = pos.x * pixelToMeter / 2 - 100;
 	    	this.b2world.DrawDebugData(-offsetx, 0);
 	    };
 
