@@ -36,6 +36,7 @@ window.cancelRequestAnimFrame = (function () {
 
     input = {};
 
+    // Lets add some predefined key codes
     input.keyCode = {
         // direction keys
         A: 65,
@@ -53,6 +54,8 @@ window.cancelRequestAnimFrame = (function () {
         SHIFT: 16,
         CTRL: 17,
         ALT: 18,
+
+        // action key for AWSD controls
         J: 74,
         K: 75,
         L: 76,
@@ -113,20 +116,9 @@ window.cancelRequestAnimFrame = (function () {
 
 })();
 
-/*
-    // Export shortcuts of box2d into global space
-    window.b2Vec2 = Box2D.Common.Math.b2Vec2;
-    window.b2BodyDef = Box2D.Dynamics.b2BodyDef;
-    window.b2Body = Box2D.Dynamics.b2Body;
-    window.b2FixtureDef = Box2D.Dynamics.b2FixtureDef;
-    window.b2Fixture = Box2D.Dynamics.b2Fixture;
-    window.b2World = Box2D.Dynamics.b2World;
-    window.b2MassData = Box2D.Collision.Shapes.b2MassData;
-    window.b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
-    window.b2CircleShape = Box2D.Collision.Shapes.b2CircleShape;
-    window.b2DebugDraw = Box2D.Dynamics.b2DebugDraw;
-*/
-
+/**
+ * Exporting Box2D core objects into external scope
+ */
 var b2Vec2 = Box2D.Common.Math.b2Vec2,
     b2AABB = Box2D.Collision.b2AABB,
     b2BodyDef = Box2D.Dynamics.b2BodyDef,
@@ -143,32 +135,7 @@ var b2Vec2 = Box2D.Common.Math.b2Vec2,
     b2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef,
     b2DistanceJoint = Box2D.Dynamics.Joints.b2DistanceJoint,
     b2RevoluteJoint = Box2D.Dynamics.Joints.b2RevoluteJoint,
-    b2RevoluteJointDef=Box2D.Dynamics.Joints.b2RevoluteJointDef;
-
-(function() {
-    //#region box2d,game,other配置
-    var config = {
-        //米到像素的缩放大小
-        PixelToMeter: 30.0,
-        //重力
-        gravity: new b2Vec2(0, 10),
-        //帧率
-        fps: 1 / 60,
-        //速度迭代次数
-        vIterations: 10,
-        //位置迭代次数
-        pIterations: 10
-        //是否监听键盘事件
-        //keyboardListenerEnabled: true,
-        //是否监听鼠标事件
-        //mouseListenerEnabled: false
-        //是否是鼠标关节可用
-        //mouseJointEnabled:true
-    };
-    window["box2dConfig"] = config;
-    //#endregion
-})();
-
+    b2RevoluteJointDef= Box2D.Dynamics.Joints.b2RevoluteJointDef;
 
 // Start the main app logic.
 requirejs(['app/World'], function(World) {
