@@ -12,7 +12,9 @@ define(function(){
         this.spring1 = null;
         this.spring2 = null;
 
-        var force = 2700;
+        // motor 
+        var speed = 15;
+        var torque = 3500;
 
 
   	    var fixDef = Object.create(this.world.fixDef);
@@ -81,13 +83,17 @@ define(function(){
 
         // create visual opengl representation of the car
         // build visual representation of car body
-        var geometryBody = new THREE.CubeGeometry(data.w, data.h, 1);
-        var geometryTop = new THREE.CubeGeometry(data.w, data.h, 1);
-
         var material = new THREE.MeshLambertMaterial( { color: 0x248F24 } );
+        
+        var geometryBody = new THREE.CubeGeometry(data.w, data.h, 1);
+        var geometryTop = new THREE.CubeGeometry(data.w * 0.5, data.h, 1);
 
         var glcarBody = new THREE.Mesh( geometryBody, material );
-        glcarBody.add(geometryTop);
+        var glcarTop = new THREE.Mesh( geometryTop, material );
+
+        glcarTop.position.y = -0.8;
+        glcarTop.position.x = -0.4;
+        glcarBody.add(glcarTop);
 
         // create wheels
         var wheelgeometry = new THREE.CylinderGeometry(
@@ -139,17 +145,25 @@ define(function(){
         world.scene.add( glcarBody );
 
         this.update = function(input) {
-            // this.motor1.SetMotorSpeed(15*Math.PI * (input.isPressed(40) ? 1 : input.isPressed(38) ? -1 : 0));
-            // this.motor1.SetMaxMotorTorque(input.isPressed(40) || input.isPressed(38) ? 17 : 0.5);
+
+            // accelerate car            
+            this.motor1.SetMotorSpeed(
+                speed * Math.PI * (input.getKey(input.keyCode.D) ? 1 : input.getKey(input.keyCode.A) ? -1 : 0));
+
+            this.motor1.SetMaxMotorTorque(
+                input.getKey(input.keyCode.A) || input.getKey(input.keyCode.D) ? torque : 0.5);
+
+
+            /* TODO: commenting for now, its very hard to balance this force
+            var force = 5700;
 
             if (input.getKey(input.keyCode.A)) {
-                this.wheel1.ApplyTorque(-1 * force);
-                this.wheel2.ApplyTorque(-1 * force);
+                this.carBody.ApplyTorque(-1 * force);
             }
             if (input.getKey(input.keyCode.D)) {
-                this.wheel1.ApplyTorque(force);
-                this.wheel2.ApplyTorque(force);
+                this.carBody.ApplyTorque(force);
             }
+            */
 
             // update opengl position
             var bodyDef2 = this.carBody.GetDefinition();
