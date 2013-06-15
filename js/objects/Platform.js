@@ -35,7 +35,7 @@ define(function(){
 
 		// console.log(this.bodyDef2);
 		this.update = function() {
-			// DO NOTHING FOR NOW
+			// do nothing for now as platforms are completely unmovable
 		}
 	}
 })
