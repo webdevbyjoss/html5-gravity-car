@@ -153,7 +153,6 @@ define(function(){
             this.motor1.SetMaxMotorTorque(
                 input.getKey(input.keyCode.A) || input.getKey(input.keyCode.D) ? torque : 0.5);
 
-
             /* TODO: commenting for now, its very hard to balance this force
             var force = 5700;
 
