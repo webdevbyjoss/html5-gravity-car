@@ -54,9 +54,9 @@ define(function(){
         anchor = this.carBody.GetWorldPoint(new b2Vec2(localX, localY));
 
         fixDef = Object.create(this.world.fixDef);
-        fixDef.density = 15;
-        fixDef.friction = 10;
-        fixDef.restitution = 1.5;
+        fixDef.density = 50;
+        fixDef.friction = 100;
+        fixDef.restitution = 1;
         fixDef.shape = new b2CircleShape(data.wheelRadius);
         bodyDef.position.Set(anchor.x, anchor.y);
         this.wheel1 = this.world.b2world.CreateBody(bodyDef);
