@@ -13,8 +13,8 @@ define(function(){
         this.spring2 = null;
 
         // motor 
-        var speed = 10;
-        var torque = 2000;
+        var speed = 15;
+        var torque = 4000;
 
 
   	    var fixDef = Object.create(this.world.fixDef);
