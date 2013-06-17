@@ -57,18 +57,26 @@ define([
 			pos: {x: 12, y: 19},
 			box: {w: 10, h: 0.5}
 		}, {
-			pos: {x: 23.5, y: 18.3},
+			pos: {x: 23.5, y: 18.6},
 			box: {w: 2, h: 0.5},
-			angle: -Math.PI/8
+			angle: -Math.PI/13
 		},{
-			pos: {x: 30, y: 18.35},
+			pos: {x: 30.3, y: 18.68},
 			box: {w: 5, h: 0.5},
-			angle: Math.PI/20
+			angle: Math.PI/30
 		}, {
-			pos: {x: 64, y: 19},
-			box: {w: 30, h: 0.5}
+			pos: {x: 94, y: 19},
+			box: {w: 60, h: 0.5}
+		},{
+			pos: {x: 75.5, y: 18.6},
+			box: {w: 2, h: 0.5},
+			angle: -Math.PI/15
+		},{
+			pos: {x: 82.3, y: 18.73},
+			box: {w: 5, h: 0.5},
+			angle: Math.PI/30
 		}, {
-			pos: {x: 95, y: 18.5},
+			pos: {x: 155, y: 18.5},
 			box: {w: 2, h: 0.5},
 			angle: -Math.PI / 2
 		}];
