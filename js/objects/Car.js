@@ -14,7 +14,7 @@ define(function(){
 
         // motor 
         var speed = 15;
-        var torque = 4000;
+        var torque = 10000;
 
 
   	    var fixDef = Object.create(this.world.fixDef);
@@ -28,7 +28,7 @@ define(function(){
   	    var bodyDef = new b2BodyDef;
 
         //create car body
-        fixDef.density = 100;
+        fixDef.density = 300;
         fixDef.friction = 0.3;
         fixDef.restitution = 0.1;
         fixDef.shape = new b2PolygonShape();
@@ -155,17 +155,18 @@ define(function(){
             this.motor1.SetMaxMotorTorque(
                 input.getKey(input.keyCode.A) || input.getKey(input.keyCode.D) ? torque : 0.5);
 
-            /* TODO: commenting for now, its very hard to balance this force
-            var force = 5700;
+            /* TODO: commenting for now, its very hard to balance this force */
+            var force = 570000;
 
-            if (input.getKey(input.keyCode.A)) {
-                this.carBody.ApplyTorque(-1 * force);
-            }
-            if (input.getKey(input.keyCode.D)) {
+            /*
+            if (input.getKeyDown(input.keyCode.A)) {
                 this.carBody.ApplyTorque(force);
             }
+            if (input.getKeyDown(input.keyCode.D)) {
+                this.carBody.ApplyTorque(-1 * force);
+            }
             */
-
+  
             // update opengl position
             var bodyDef2 = this.carBody.GetDefinition();
             glcarBody.position.x = bodyDef2.position.x;

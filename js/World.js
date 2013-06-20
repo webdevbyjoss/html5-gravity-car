@@ -23,6 +23,8 @@ define([
 		this.camera.rotation.z = Math.PI;
 		this.camera.rotation.y = Math.PI;
 
+		var debugElem = document.getElementById('cam');
+
 		// add subtle blue ambient lighting
 		var ambientLight = new THREE.AmbientLight(0x004444);
 		this.scene.add(ambientLight);
@@ -75,11 +77,20 @@ define([
 			pos: {x: 82.3, y: 18.73},
 			box: {w: 5, h: 0.5},
 			angle: Math.PI/30
-		}, {
+		}/*, {
 			pos: {x: 155, y: 18.5},
 			box: {w: 2, h: 0.5},
 			angle: -Math.PI / 2
-		}];
+		}*/];
+
+		for (var i = 0; i <= 100; i++) {
+			platforms.push({
+				pos: {x: i*10, y: 19},
+				box: {w: 10, h: Math.random() * 0.1}
+			});
+		}
+
+
 
 		this.ground = [];
 		for (var i = 0; i < platforms.length; i++) {
@@ -134,18 +145,23 @@ define([
 
 			var vel = this.car.carBody.GetLinearVelocity();
 			var velmodule = vel.x * vel.x + vel.y * vel.y;
-
-			this.camera.position.x = pos.x + 5;
-			this.camera.position.y = pos.y - 2;
+			debugElem.value = velmodule;
 
 			// update acmera Z coordinate softly
 			var cameraTargetZ = -10 - (velmodule * 0.02);
-			var cameraSpeed = Math.abs(cameraTargetZ - this.camera.position.z) * 0.1;
+
+			var cameraSpeed = Math.abs(cameraTargetZ - this.camera.position.z) * 0.5;
+
 			if (this.camera.position.z < cameraTargetZ) {
-				this.camera.position.z += cameraSpeed * 0.5;
+				this.camera.position.z += cameraSpeed;
 			} else {
-				this.camera.position.z -= cameraSpeed * 0.5;
+				this.camera.position.z -= cameraSpeed;
 			}
+
+			var camShiftX = (Math.abs(this.camera.position.z) - 10);
+			this.camera.position.x = pos.x + 5 + camShiftX * 0.5;
+			this.camera.position.y = pos.y - 2 - camShiftX * 0.3;
+
 
 			// output some debug on SPACE
 			if (input.getKeyDown(input.keyCode.SPACE)) {
