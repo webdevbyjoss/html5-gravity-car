@@ -13,9 +13,10 @@ define(function(){
         this.spring2 = null;
 
         // motor 
-        var speed = 100;
-        var motorTorque = 10000;
+        var speed = 20;
+        var motorTorque = 8000;
         var torqueForce = 500;
+        var stabilizationForce = 20000;
 
 
   	    var fixDef = Object.create(this.world.fixDef);
@@ -25,7 +26,7 @@ define(function(){
   	    var bodyDef = new b2BodyDef;
 
         //create car body
-        fixDef.density = 500;
+        fixDef.density = 400;
         fixDef.friction = 0.2;
         fixDef.restitution = -5;
         fixDef.shape = new b2PolygonShape();
@@ -51,7 +52,7 @@ define(function(){
         anchor = this.carBody.GetWorldPoint(new b2Vec2(localXback, localY));
 
         fixDef = Object.create(this.world.fixDef);
-        fixDef.density = 40;
+        fixDef.density = 30;
         fixDef.friction = 0.8;
         fixDef.restitution = 0.2;
         fixDef.shape = new b2CircleShape(data.wheelRadius);
@@ -154,8 +155,7 @@ define(function(){
             // it will be easier to flip car up side down
             // but almost impossible if it is in correct position
             var carAngle = normalizeAngle(this.carBody.GetAngle());
-            var carTorquoRatio = Math.sin(carAngle * 0.5);
-
+            var carTorquoRatio = Math.sin(carAngle * 0.5); // strongest when car is up-side-down
             if (input.getKey(input.keyCode.A)) {
                 this.carBody.ApplyTorque(torqueForce * carTorquoRatio);
             }
@@ -169,7 +169,14 @@ define(function(){
                 this.carBody.ApplyTorque(-1 * (torqueForce * 500 * carTorquoRatio));
             }
             
-            // 
+            // car stabilization, lets apply the torque force into opposit direction
+            // depending on current car position relative from ground
+            var carTorquoStabilizationRatio = Math.sin(carAngle); // strongest in vertical position
+            this.carBody.ApplyTorque(-1 * stabilizationForce * carTorquoStabilizationRatio);
+
+            // alright, we've added manual car correction and automatic stabilization
+            // now its time to apply some downforce
+            // this.carBody.ApplyForce(new b2Vec2(0, 100), {x:0, y:0});
 
 
             // update opengl position

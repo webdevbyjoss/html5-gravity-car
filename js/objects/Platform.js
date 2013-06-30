@@ -7,7 +7,11 @@ define(function(){
 	    var fixDef = Object.create(this.world.fixDef);
 	    fixDef.shape = new b2PolygonShape;
 	    fixDef.shape.SetAsBox(data.box.w * 0.5, data.box.h * 0.5);
-	   
+	   	fixDef.density = 100;
+	    fixDef.friction = 0.7;
+	    fixDef.restitution = 0.2;
+
+
 		// build physical body according to data
 	    var bodyDef = new b2BodyDef;
 	    bodyDef.type = b2Body.b2_staticBody;

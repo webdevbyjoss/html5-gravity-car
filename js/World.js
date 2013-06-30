@@ -1,7 +1,7 @@
 define([
 	'app/objects/Platform',
 	'app/objects/Car',
-	'app/objects/Road',
+	'app/objects/Road'
 ], function(
 	Platform,
 	Car,
@@ -43,73 +43,19 @@ define([
 
 	    // default fixture values
 	    this.fixDef = new b2FixtureDef;
-	    this.fixDef.density = 1000.0;
-	    this.fixDef.friction = 1;
-	    this.fixDef.restitution = 0;
-
-	    /*
-		var platforms = [{
-			pos: {x: -15, y: 17},
-			box: {w: 2, h: 0.5},
-			angle: -Math.PI / 2
-		},{
-			pos: {x: -5, y: 18.62},
-			box: {w: 10, h: 0.5},
-			angle: Math.PI/80
-		}, {
-			pos: {x: 12, y: 19},
-			box: {w: 10, h: 0.5}
-		}, {
-			pos: {x: 23.5, y: 18.6},
-			box: {w: 2, h: 0.5},
-			angle: -Math.PI/13
-		},{
-			pos: {x: 30.3, y: 18.68},
-			box: {w: 5, h: 0.5},
-			angle: Math.PI/30
-		}, {
-			pos: {x: 94, y: 19},
-			box: {w: 60, h: 0.5}
-		},{
-			pos: {x: 75.5, y: 18.6},
-			box: {w: 2, h: 0.5},
-			angle: -Math.PI/15
-		},{
-			pos: {x: 82.3, y: 18.73},
-			box: {w: 5, h: 0.5},
-			angle: Math.PI/30
-		}/*, {
-			pos: {x: 155, y: 18.5},
-			box: {w: 2, h: 0.5},
-			angle: -Math.PI / 2
-		}];*/
-
-		/*
-		for (var i = 0; i <= 100; i++) {
-			platforms.push({
-				pos: {x: i*10, y: 19},
-				box: {w: 10, h: Math.random() * 0.1}
-			});
-		}
-		*/
-
-
-		/*
-		this.ground = [];
-		for (var i = 0; i < platforms.length; i++) {
-			this.ground[i] = new Platform(this, platforms[i]);
-		}
-		*/
+	    this.fixDef.density = 1.0;
+	    this.fixDef.friction = 0.5;
+	    this.fixDef.restitution = 1;
 
 		this.road = new Road(this, 3);
 
 	    // create car
 	    this.car = new Car(this, {
             posx: 5,
-            posy: 16,
+            posy: 13,
 			w: 5.1,
             h: 1,
-            wheelRadius: 0.8
+            wheelRadius: 0.6
         });
 
 
@@ -126,7 +72,7 @@ define([
 	    this.update = function(input) {
 
 	    	this.b2world.Step(
-	               1 / 60   //frame-rate
+	               1 / 50   //frame-rate
 	            ,  8       //velocity iterations
 	            ,  3       //position iterations
 	        );
@@ -173,7 +119,8 @@ define([
 	    	
 	    	var pos = this.car.carBody.GetPosition();
 	    	var offsetx = pos.x * pixelToMeter / 2 - 100;
-	    	this.b2world.DrawDebugData(-offsetx, 0);
+	    	var offsety = -1 * (pos.y * pixelToMeter / 2 - 250);
+	    	this.b2world.DrawDebugData(-offsetx, offsety);
 	    };
 
 
