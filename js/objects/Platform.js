@@ -6,7 +6,7 @@ define(function(){
 		// build fixture
 	    var fixDef = Object.create(this.world.fixDef);
 	    fixDef.shape = new b2PolygonShape;
-	    fixDef.shape.SetAsBox(data.box.w, data.box.h);
+	    fixDef.shape.SetAsBox(data.box.w * 0.5, data.box.h * 0.5);
 	   
 		// build physical body according to data
 	    var bodyDef = new b2BodyDef;
@@ -21,7 +21,7 @@ define(function(){
 	    this.fixture = this.obj.CreateFixture(fixDef);
 
 	    // build visual representation
-	   	var geometry = new THREE.CubeGeometry(data.box.w * 2, data.box.h * 2, 3);
+	   	var geometry = new THREE.CubeGeometry(data.box.w, data.box.h, 3);
 		var material = new THREE.MeshLambertMaterial( { color: 0x75A3FF } );
 		var cube = new THREE.Mesh( geometry, material );
 		world.scene.add( cube );
