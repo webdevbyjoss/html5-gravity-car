@@ -1,11 +1,11 @@
 define([
 	'app/objects/Platform',
-	'app/objects/Item',
 	'app/objects/Car',
+	'app/objects/Road',
 ], function(
 	Platform,
-	Item,
-	Car
+	Car,
+	Road
 ){
 
 	return function() {
@@ -47,6 +47,7 @@ define([
 	    this.fixDef.friction = 1;
 	    this.fixDef.restitution = 0;
 
+	    /*
 		var platforms = [{
 			pos: {x: -15, y: 17},
 			box: {w: 2, h: 0.5},
@@ -81,37 +82,34 @@ define([
 			pos: {x: 155, y: 18.5},
 			box: {w: 2, h: 0.5},
 			angle: -Math.PI / 2
-		}*/];
+		}];*/
 
+		/*
 		for (var i = 0; i <= 100; i++) {
 			platforms.push({
 				pos: {x: i*10, y: 19},
 				box: {w: 10, h: Math.random() * 0.1}
 			});
 		}
+		*/
 
 
-
+		/*
 		this.ground = [];
 		for (var i = 0; i < platforms.length; i++) {
 			this.ground[i] = new Platform(this, platforms[i]);
 		}
+		*/
 
-	    // create game objects
-	    /*
-	    var items = [];
-	    for(var i = 0; i < 30; ++i) {
-	    	items[i] = new Item(this);
-	    }
-	    */
+		this.road = new Road(this, 3);
 
 	    // create car
 	    this.car = new Car(this, {
-            posx: 10,
+            posx: 5,
             posy: 16,
-			w: 5,
+			w: 5.1,
             h: 1,
-            wheelRadius: 0.6
+            wheelRadius: 0.8
         });
 
 
@@ -128,15 +126,12 @@ define([
 	    this.update = function(input) {
 
 	    	this.b2world.Step(
-	               1 / 50   //frame-rate
+	               1 / 60   //frame-rate
 	            ,  8       //velocity iterations
 	            ,  3       //position iterations
 	        );
 	        this.b2world.ClearForces();
 
-	    	for (var i = 0; i < this.ground.length; i++) {
-	    		this.ground[i].update();
-	    	}
 
 	    	this.car.update(input);
 
@@ -144,13 +139,13 @@ define([
 	    	var pos =  this.car.carBody.GetPosition();
 
 			var vel = this.car.carBody.GetLinearVelocity();
-			var velmodule = vel.x * vel.x + vel.y * vel.y;
+			var velmodule = Math.sqrt(vel.x * vel.x + vel.y * vel.y);
 			debugElem.value = velmodule;
 
 			// update acmera Z coordinate softly
-			var cameraTargetZ = -10 - (velmodule * 0.02);
+			var cameraTargetZ = -10 - (velmodule * 0.5);
 
-			var cameraSpeed = Math.abs(cameraTargetZ - this.camera.position.z) * 0.5;
+			var cameraSpeed = Math.abs(cameraTargetZ - this.camera.position.z) * 0.1;
 
 			if (this.camera.position.z < cameraTargetZ) {
 				this.camera.position.z += cameraSpeed;
@@ -165,8 +160,7 @@ define([
 
 			// output some debug on SPACE
 			if (input.getKeyDown(input.keyCode.SPACE)) {
-				// console.log(this.car.carBody);
-				console.log(this.b2world.m_debugDraw.m_sprite);
+				console.log(this.car.carBody);
 			}
 	    };
 
@@ -181,6 +175,7 @@ define([
 	    	var offsetx = pos.x * pixelToMeter / 2 - 100;
 	    	this.b2world.DrawDebugData(-offsetx, 0);
 	    };
+
 
 	}
 });

@@ -13,26 +13,23 @@ define(function(){
         this.spring2 = null;
 
         // motor 
-        var speed = 15;
-        var torque = 10000;
+        var speed = 100;
+        var motorTorque = 10000;
+        var torqueForce = 500;
 
 
   	    var fixDef = Object.create(this.world.fixDef);
         fixDef.shape = new b2PolygonShape;
-        fixDef.shape.SetAsBox(
-          2, //half width
-          1  //half height
-        );
 
         // define car body
   	    var bodyDef = new b2BodyDef;
 
         //create car body
-        fixDef.density = 300;
-        fixDef.friction = 0.3;
-        fixDef.restitution = 0.1;
+        fixDef.density = 500;
+        fixDef.friction = 0.2;
+        fixDef.restitution = -5;
         fixDef.shape = new b2PolygonShape();
-        fixDef.shape.SetAsBox(data.w * 0.5, data.h * 0.5);
+        fixDef.shape.SetAsBox(data.w * 0.5, data.h * 0.3);
 
         bodyDef.type = b2Body.b2_dynamicBody;
         bodyDef.position.Set(data.posx, data.posy);
@@ -47,16 +44,16 @@ define(function(){
         this.carBody.CreateFixture(fixDef);
 
 
-        var anchor, localX, localY, revoluteJ;
+        var anchor, localXback, localXfront, localY, revoluteJ;
         //create wheel1
-        localX = (data.wheelRadius * 1.5 - data.w * 0.5);
+        localXback = (data.wheelRadius * 1.5 - data.w * 0.5);
         localY = data.h * 0.4;
-        anchor = this.carBody.GetWorldPoint(new b2Vec2(localX, localY));
+        anchor = this.carBody.GetWorldPoint(new b2Vec2(localXback, localY));
 
         fixDef = Object.create(this.world.fixDef);
-        fixDef.density = 50;
-        fixDef.friction = 100;
-        fixDef.restitution = 1;
+        fixDef.density = 40;
+        fixDef.friction = 0.8;
+        fixDef.restitution = 0.2;
         fixDef.shape = new b2CircleShape(data.wheelRadius);
         bodyDef.position.Set(anchor.x, anchor.y);
         this.wheel1 = this.world.b2world.CreateBody(bodyDef);
@@ -69,8 +66,8 @@ define(function(){
         this.motor1 = this.world.b2world.CreateJoint(revoluteJ);
 
         //create wheel 2
-        localX = (data.w * 0.5 - data.wheelRadius * 2);
-        anchor = this.carBody.GetWorldPoint(new b2Vec2(localX, localY));
+        localXfront = (data.w * 0.5 - data.wheelRadius * 2);
+        anchor = this.carBody.GetWorldPoint(new b2Vec2(localXfront, localY));
         bodyDef.position.Set(anchor.x, anchor.y);
         this.wheel2 = this.world.b2world.CreateBody(bodyDef);
         this.wheel2.CreateFixture(fixDef);
@@ -119,11 +116,10 @@ define(function(){
         glWheel1right.rotation.x = Math.PI/2;
         glWheel2right.rotation.x = Math.PI/2;
 
-        glWheel1left.position.x = -1.5;
-        glWheel2left.position.x = 1.3;
-        glWheel1right.position.x = -1.5;
-        glWheel2right.position.x = 1.3;
-
+        glWheel1left.position.x = localXback; // -1.5
+        glWheel2left.position.x = localXfront; // 1.3;
+        glWheel1right.position.x = localXback; // -1.5;
+        glWheel2right.position.x = localXfront; // 1.3;
 
         glWheel1left.position.z = -1;
         glWheel2left.position.z = -1;
@@ -131,10 +127,10 @@ define(function(){
         glWheel2right.position.z = 1;
 
 
-        glWheel1left.position.y = 0.42;
-        glWheel2left.position.y = 0.42;
-        glWheel1right.position.y = 0.42;
-        glWheel2right.position.y = 0.42;
+        glWheel1left.position.y = localY;
+        glWheel2left.position.y = localY;
+        glWheel1right.position.y = localY;
+        glWheel2right.position.y = localY;
 
 
         // attach wheels to the car        
@@ -153,20 +149,29 @@ define(function(){
                 speed * Math.PI * (input.getKey(input.keyCode.D) ? 1 : input.getKey(input.keyCode.A) ? -1 : 0));
 
             this.motor1.SetMaxMotorTorque(
-                input.getKey(input.keyCode.A) || input.getKey(input.keyCode.D) ? torque : 0.5);
+                input.getKey(input.keyCode.A) || input.getKey(input.keyCode.D) ? motorTorque : 0.5);
 
-            /* TODO: commenting for now, its very hard to balance this force */
-            var force = 570000;
+            // it will be easier to flip car up side down
+            // but almost impossible if it is in correct position
+            var carAngle = normalizeAngle(this.carBody.GetAngle());
+            var carTorquoRatio = Math.sin(carAngle * 0.5);
 
-            /*
+            if (input.getKey(input.keyCode.A)) {
+                this.carBody.ApplyTorque(torqueForce * carTorquoRatio);
+            }
+            if (input.getKey(input.keyCode.D)) {
+                this.carBody.ApplyTorque(-1 * torqueForce * carTorquoRatio);
+            }
             if (input.getKeyDown(input.keyCode.A)) {
-                this.carBody.ApplyTorque(force);
+                this.carBody.ApplyTorque(torqueForce * 500 * carTorquoRatio);
             }
             if (input.getKeyDown(input.keyCode.D)) {
-                this.carBody.ApplyTorque(-1 * force);
+                this.carBody.ApplyTorque(-1 * (torqueForce * 500 * carTorquoRatio));
             }
-            */
-  
+            
+            // 
+
+
             // update opengl position
             var bodyDef2 = this.carBody.GetDefinition();
             glcarBody.position.x = bodyDef2.position.x;
@@ -179,6 +184,13 @@ define(function(){
             glWheel2left.rotation.y = wheel2Def.angle;
             glWheel1right.rotation.y = wheel1Def.angle;
             glWheel2right.rotation.y = wheel2Def.angle;
+        }
+
+
+        function normalizeAngle(angle) {
+          angle = angle % (2 * Math.PI); 
+          return angle >= 0 ? angle : angle + 2 * Math.PI;
+          // angle = atan2(sin(angle, cos(angle))
         }
     }
 })
