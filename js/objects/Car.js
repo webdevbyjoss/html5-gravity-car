@@ -13,10 +13,10 @@ define(function(){
         this.spring2 = null;
 
         // motor 
-        var speed = 20;
-        var motorTorque = 8000;
+        var speed = 30;
+        var motorTorque = 3000;
         var torqueForce = 500;
-        var stabilizationForce = 20000;
+        var stabilizationForce = 8000;
 
 
   	    var fixDef = Object.create(this.world.fixDef);
@@ -27,8 +27,8 @@ define(function(){
 
         //create car body
         fixDef.density = 400;
-        fixDef.friction = 0.2;
-        fixDef.restitution = -5;
+        fixDef.friction = 0;
+        fixDef.restitution = 0;
         fixDef.shape = new b2PolygonShape();
         fixDef.shape.SetAsBox(data.w * 0.5, data.h * 0.3);
 
@@ -52,9 +52,9 @@ define(function(){
         anchor = this.carBody.GetWorldPoint(new b2Vec2(localXback, localY));
 
         fixDef = Object.create(this.world.fixDef);
-        fixDef.density = 30;
-        fixDef.friction = 0.8;
-        fixDef.restitution = 0.2;
+        fixDef.density = 10;
+        fixDef.friction = 100;
+        fixDef.restitution = 0;
         fixDef.shape = new b2CircleShape(data.wheelRadius);
         bodyDef.position.Set(anchor.x, anchor.y);
         this.wheel1 = this.world.b2world.CreateBody(bodyDef);
@@ -67,7 +67,7 @@ define(function(){
         this.motor1 = this.world.b2world.CreateJoint(revoluteJ);
 
         //create wheel 2
-        localXfront = (data.w * 0.5 - data.wheelRadius * 2);
+        localXfront = (data.w * 0.5 - data.wheelRadius * 1.5);
         anchor = this.carBody.GetWorldPoint(new b2Vec2(localXfront, localY));
         bodyDef.position.Set(anchor.x, anchor.y);
         this.wheel2 = this.world.b2world.CreateBody(bodyDef);
@@ -157,22 +157,22 @@ define(function(){
             var carAngle = normalizeAngle(this.carBody.GetAngle());
             var carTorquoRatio = Math.sin(carAngle * 0.5); // strongest when car is up-side-down
             if (input.getKey(input.keyCode.A)) {
-                this.carBody.ApplyTorque(torqueForce * carTorquoRatio);
+                this.carBody.ApplyTorque(torqueForce * carTorquoRatio * 0.5);
             }
             if (input.getKey(input.keyCode.D)) {
-                this.carBody.ApplyTorque(-1 * torqueForce * carTorquoRatio);
+                this.carBody.ApplyTorque(-1 * torqueForce * carTorquoRatio * 0.5);
             }
             if (input.getKeyDown(input.keyCode.A)) {
-                this.carBody.ApplyTorque(torqueForce * 500 * carTorquoRatio);
+                this.carBody.ApplyTorque(torqueForce * 500);
             }
             if (input.getKeyDown(input.keyCode.D)) {
-                this.carBody.ApplyTorque(-1 * (torqueForce * 500 * carTorquoRatio));
+                this.carBody.ApplyTorque(-1 * (torqueForce));
             }
             
             // car stabilization, lets apply the torque force into opposit direction
             // depending on current car position relative from ground
-            var carTorquoStabilizationRatio = Math.sin(carAngle); // strongest in vertical position
-            this.carBody.ApplyTorque(-1 * stabilizationForce * carTorquoStabilizationRatio);
+            // var carTorquoStabilizationRatio = Math.sin(carAngle); // strongest in vertical position
+            // this.carBody.ApplyTorque(-1 * stabilizationForce * carTorquoStabilizationRatio);
 
             // alright, we've added manual car correction and automatic stabilization
             // now its time to apply some downforce
