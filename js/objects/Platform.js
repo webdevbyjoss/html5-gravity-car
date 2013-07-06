@@ -8,8 +8,8 @@ define(function(){
 	    fixDef.shape = new b2PolygonShape;
 	    fixDef.shape.SetAsBox(data.box.w * 0.5, data.box.h * 0.5);
 	   	fixDef.density = 100;
-	    fixDef.friction = 0.7;
-	    fixDef.restitution = 0.2;
+	    fixDef.friction = 100;
+	    fixDef.restitution = 0;
 
 
 		// build physical body according to data

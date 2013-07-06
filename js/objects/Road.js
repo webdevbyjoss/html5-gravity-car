@@ -18,6 +18,7 @@ define([
 
 		var x = 0;
 		var y = 18;
+		var yradians = 0;
 		var w = 0;
 		var l = 0;
 		var prevx = 0;
@@ -28,29 +29,29 @@ define([
 		var dx = 0;
 		var dy = 0;
 		var angle = 0;
-		var ydir = 0;
 
 		// draw road
 		for (var i = 0; i <= length; i++) {
-
-			var w = 5 + (rand.next() - 0.5) * levelSeed;
-			var l = 3 + (rand.next() - 0.5) * levelSeed;
+			/*
+			var w = 3 + (rand.next() - 0.5) * levelSeed;
+			var l = 5 + (rand.next() - 0.5) * levelSeed;
 
 			// create horisontal platform
 			new Platform(world, {
 				'pos': {'x': x + (w * 0.5) , 'y': y},
 				'box': {'w': w, 'h': 0.5}
 			});
+			*/
 
 			// shift to next position
 			prevx = x;
 			prevy = y;
 
 			// lets descide where we should move
-			ydir = (rand.next() - 0.5);
-			y = y + (rand.next() - 0.5) * ((w + l) / 2);
+			yradians += Math.PI * 0.1;
+			y = 18 + 2 * Math.cos(yradians);
 
-			x += w + l;
+			x += 3; // rand.next() * ;
 
 			// create oriented platform
 			mx = avg(prevx + w, x);
