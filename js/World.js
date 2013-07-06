@@ -41,8 +41,6 @@ define([
 	        true                 //allow sleep
 	    );
 
-	    console.log(this.b2world);
-
 	    // default fixture values
 	    this.fixDef = new b2FixtureDef;
 	    this.fixDef.density = 1.0;
@@ -55,8 +53,8 @@ define([
 	    this.car = new Car(this, {
             posx: 5,
             posy: 13,
-			w: 4.5,
-            h: 1,
+			w: 5,
+            h: 1.5,
             wheelRadius: 0.6
         });
 
@@ -107,7 +105,7 @@ define([
 
 			// output some debug on SPACE
 			if (input.getKeyDown(input.keyCode.SPACE)) {
-				console.log(this.car.carBody);
+
 			}
 	    };
 
