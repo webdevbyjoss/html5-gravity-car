@@ -11,12 +11,15 @@ define(function(){
         this.axle2 = null;
         this.spring1 = null;
         this.spring2 = null;
+        this._vel = null;
 
         // motor 
-        var speed = 30;
-        var motorTorque = 3000;
-        var torqueForce = 500;
-        var stabilizationForce = 8000;
+        var motorSpeed = 1;
+        var motorTorque = 5;
+
+        // manual stabilization force
+        var torqueForce = 1;
+        var stabilizationForce = 1;
 
 
   	    var fixDef = Object.create(this.world.fixDef);
@@ -26,9 +29,11 @@ define(function(){
   	    var bodyDef = new b2BodyDef;
 
         //create car body
-        fixDef.density = 400;
-        fixDef.friction = 0;
-        fixDef.restitution = 0;
+        fixDef.density = 0.8;
+        fixDef.friction = 0.5;
+        fixDef.restitution = 0.01;
+        fixDef.filter.groupIndex = -1;
+
         fixDef.shape = new b2PolygonShape();
         fixDef.shape.SetAsBox(data.w * 0.5, data.h * 0.3);
 
@@ -52,9 +57,9 @@ define(function(){
         anchor = this.carBody.GetWorldPoint(new b2Vec2(localXback, localY));
 
         fixDef = Object.create(this.world.fixDef);
-        fixDef.density = 10;
-        fixDef.friction = 100;
-        fixDef.restitution = 0;
+        fixDef.density = 0.9;
+        fixDef.friction = 6;
+        fixDef.restitution = 0.2;
         fixDef.shape = new b2CircleShape(data.wheelRadius);
         bodyDef.position.Set(anchor.x, anchor.y);
         this.wheel1 = this.world.b2world.CreateBody(bodyDef);
@@ -145,9 +150,11 @@ define(function(){
 
         this.update = function(input) {
 
+            motorSpeed = (this.getSpeed() * 0.7) + 1;
+
             // accelerate car            
             this.motor1.SetMotorSpeed(
-                speed * Math.PI * (input.getKey(input.keyCode.D) ? 1 : input.getKey(input.keyCode.A) ? -1 : 0));
+                motorSpeed * Math.PI * (input.getKey(input.keyCode.D) ? 1 : input.getKey(input.keyCode.A) ? -1 : 0));
 
             this.motor1.SetMaxMotorTorque(
                 input.getKey(input.keyCode.A) || input.getKey(input.keyCode.D) ? motorTorque : 0.5);
@@ -166,7 +173,7 @@ define(function(){
                 this.carBody.ApplyTorque(torqueForce * 500);
             }
             if (input.getKeyDown(input.keyCode.D)) {
-                this.carBody.ApplyTorque(-1 * (torqueForce));
+                this.carBody.ApplyTorque(-1 * (torqueForce) * 500);
             }
             
             // car stabilization, lets apply the torque force into opposit direction
@@ -193,6 +200,10 @@ define(function(){
             glWheel2right.rotation.y = wheel2Def.angle;
         }
 
+        this.getSpeed = function() {
+            this._vel = this.carBody.GetLinearVelocity();
+            return Math.sqrt(this._vel.x * this._vel.x + this._vel.y * this._vel.y);
+        }
 
         function normalizeAngle(angle) {
           angle = angle % (2 * Math.PI); 

@@ -7,8 +7,8 @@ define(function(){
 	    var fixDef = Object.create(this.world.fixDef);
 	    fixDef.shape = new b2PolygonShape;
 	    fixDef.shape.SetAsBox(data.box.w * 0.5, data.box.h * 0.5);
-	   	fixDef.density = 100;
-	    fixDef.friction = 100;
+	   	fixDef.density = 1;
+	    fixDef.friction = 1;
 	    fixDef.restitution = 0;
 
 

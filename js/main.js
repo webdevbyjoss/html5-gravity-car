@@ -12,6 +12,21 @@ requirejs.config({
 });
 
 
+function requestFullscreen(elem) {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) {
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    }
+}
+
+document.getElementById("full-screen").onclick = function() {
+    var elem = document.getElementById("main");
+    requestFullscreen(elem);
+}
+
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
             window.webkitRequestAnimationFrame ||

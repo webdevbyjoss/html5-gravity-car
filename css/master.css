@@ -3,3 +3,11 @@ canvas {
 	margin:auto;
 	display: block;
 }
+
+canvas:full-screen {
+	width: 100% !important;
+}
+
+canvas:-webkit-full-screen {
+	width: 100% !important;
+}
