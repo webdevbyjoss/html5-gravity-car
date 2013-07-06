@@ -41,6 +41,8 @@ define([
 	        true                 //allow sleep
 	    );
 
+	    console.log(this.b2world);
+
 	    // default fixture values
 	    this.fixDef = new b2FixtureDef;
 	    this.fixDef.density = 1.0;
@@ -53,7 +55,7 @@ define([
 	    this.car = new Car(this, {
             posx: 5,
             posy: 13,
-			w: 5.1,
+			w: 4.5,
             h: 1,
             wheelRadius: 0.6
         });
@@ -72,9 +74,9 @@ define([
 	    this.update = function(input) {
 
 	    	this.b2world.Step(
-	               1 / 50   //frame-rate
-	            ,  8       //velocity iterations
-	            ,  3       //position iterations
+	               1 / 60   //frame-rate
+	            ,  10       //velocity iterations
+	            ,  10       //position iterations
 	        );
 	        this.b2world.ClearForces();
 
@@ -84,8 +86,7 @@ define([
 	    	// update camera position according to car body
 	    	var pos =  this.car.carBody.GetPosition();
 
-			var vel = this.car.carBody.GetLinearVelocity();
-			var velmodule = Math.sqrt(vel.x * vel.x + vel.y * vel.y);
+			var velmodule = this.car.getSpeed();
 			debugElem.value = velmodule;
 
 			// update acmera Z coordinate softly

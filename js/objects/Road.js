@@ -14,7 +14,7 @@ define([
 		levelSeed = 1;
 		rand.seed(levelSeed);
 
-		var length = rand.nextInt(1, 300);
+		var length = rand.nextInt(1, 1000);
 
 		var x = 0;
 		var y = 18;
@@ -48,8 +48,10 @@ define([
 			prevy = y;
 
 			// lets descide where we should move
-			yradians += Math.PI * 0.1;
-			y = 18 + 2 * Math.cos(yradians);
+			yradians += Math.PI * 0.2;
+			y = 17 + Math.sin(0.5 * yradians) 
+					+ 3 * Math.sin(0.3 * yradians)
+					+ 10 * (Math.sin(0.05 * yradians));
 
 			x += 3; // rand.next() * ;
 
@@ -69,8 +71,8 @@ define([
 			});
 
 			/*
-			if (Math.random() < 0.3) {
-				dropGarbage(x, y);
+			if (Math.random() < 0.5) {
+				dropGarbage(x, y - 10);
 			}
 			*/
 
