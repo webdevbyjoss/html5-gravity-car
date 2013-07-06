@@ -150,7 +150,9 @@ var b2Vec2 = Box2D.Common.Math.b2Vec2,
     b2DistanceJointDef = Box2D.Dynamics.Joints.b2DistanceJointDef,
     b2DistanceJoint = Box2D.Dynamics.Joints.b2DistanceJoint,
     b2RevoluteJoint = Box2D.Dynamics.Joints.b2RevoluteJoint,
-    b2RevoluteJointDef= Box2D.Dynamics.Joints.b2RevoluteJointDef;
+    b2RevoluteJointDef= Box2D.Dynamics.Joints.b2RevoluteJointDef,
+    b2PrismaticJoint = Box2D.Dynamics.Joints.b2PrismaticJoint,
+    b2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef;
 
 // Start the main app logic.
 requirejs(['app/World'], function(World) {

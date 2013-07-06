@@ -15,11 +15,11 @@ define(function(){
 
         // motor 
         var motorSpeed = 1;
-        var motorTorque = 5;
+        var motorTorque = 15;
 
         // manual stabilization force
-        var torqueForce = 1;
-        var stabilizationForce = 1;
+        var torqueForce = 0.5;
+        var stabilizationForce = 0.5;
 
 
   	    var fixDef = Object.create(this.world.fixDef);
@@ -35,7 +35,7 @@ define(function(){
         fixDef.filter.groupIndex = -1;
 
         fixDef.shape = new b2PolygonShape();
-        fixDef.shape.SetAsBox(data.w * 0.5, data.h * 0.3);
+        fixDef.shape.SetAsBox(data.w*0.5, data.h *0.25);
 
         bodyDef.type = b2Body.b2_dynamicBody;
         bodyDef.position.Set(data.posx, data.posy);
@@ -44,45 +44,87 @@ define(function(){
 
         fixDef.shape.SetAsOrientedBox(
             data.w * 0.25,
-            data.h * 0.35,
+            data.h * 0.25,
             new b2Vec2(-0.25, -1), 0
         );
         this.carBody.CreateFixture(fixDef);
 
 
-        var anchor, localXback, localXfront, localY, revoluteJ;
-        //create wheel1
-        localXback = (data.wheelRadius * 1.5 - data.w * 0.5);
-        localY = data.h * 0.4;
-        anchor = this.carBody.GetWorldPoint(new b2Vec2(localXback, localY));
+        // add the axles
+        var axle1, axle2, prismaticJointDef;
+        this.spring1 = null;
+        this.spring2 = null;
+
+        fixDef = Object.create(this.world.fixDef);
+        fixDef.density = 1;
+        fixDef.friction = 0.5;
+        fixDef.restitution = 0.2;
+
+        bodyDef.position.x = 3.2;
+        axle1 = this.world.b2world.CreateBody(bodyDef);
+
+        bodyDef.position.x = 6.5;
+        axle2 = this.world.b2world.CreateBody(bodyDef);
+
+        fixDef.shape = new b2PolygonShape();
+        
+        fixDef.shape.SetAsBox(0.1, 0.4);
+        axle1.CreateFixture(fixDef);
+
+        fixDef.shape.SetAsBox(0.1, 0.4);
+        axle2.CreateFixture(fixDef);
+
+        // create joins
+        prismaticJointDef = new b2PrismaticJointDef();
+        var axle1Pos = axle1.GetWorldCenter();
+        axle1Pos.y += 0.4;
+        prismaticJointDef.Initialize(this.carBody, axle1, axle1Pos,
+            new b2Vec2(0, 0.5)
+        );
+        prismaticJointDef.lowerTranslation = -0.3;
+        prismaticJointDef.upperTranslation = 0.3;
+        prismaticJointDef.enableLimit = true;
+        prismaticJointDef.enableMotor = true;
+        this.spring1 = this.world.b2world.CreateJoint(prismaticJointDef);
+
+        var axle2Pos = axle2.GetWorldCenter();
+        axle2Pos.y += 0.4;
+        prismaticJointDef.Initialize(this.carBody, axle2, axle2Pos,
+            new b2Vec2(0, 0.5)
+        );
+        this.spring2 = this.world.b2world.CreateJoint(prismaticJointDef);
+
 
         fixDef = Object.create(this.world.fixDef);
         fixDef.density = 0.9;
         fixDef.friction = 6;
         fixDef.restitution = 0.2;
+
+        //create wheel1
         fixDef.shape = new b2CircleShape(data.wheelRadius);
-        bodyDef.position.Set(anchor.x, anchor.y);
+        bodyDef.position.Set(axle1.GetWorldCenter().x, axle1.GetWorldCenter().y + 0.3);
         this.wheel1 = this.world.b2world.CreateBody(bodyDef);
         this.wheel1.CreateFixture(fixDef);
 
+        var revoluteJ;
         //create wheel1 joint
         revoluteJ = new b2RevoluteJointDef();
         revoluteJ.enableMotor = true;
-        revoluteJ.Initialize(this.carBody, this.wheel1, anchor);
+        revoluteJ.Initialize(axle1, this.wheel1, this.wheel1.GetWorldCenter());
         this.motor1 = this.world.b2world.CreateJoint(revoluteJ);
 
         //create wheel 2
-        localXfront = (data.w * 0.5 - data.wheelRadius * 1.5);
-        anchor = this.carBody.GetWorldPoint(new b2Vec2(localXfront, localY));
-        bodyDef.position.Set(anchor.x, anchor.y);
+        bodyDef.position.Set(axle2.GetWorldCenter().x, axle2.GetWorldCenter().y + 0.3);
         this.wheel2 = this.world.b2world.CreateBody(bodyDef);
         this.wheel2.CreateFixture(fixDef);
-
         //create wheel2 joint
         revoluteJ = new b2RevoluteJointDef();
         revoluteJ.enableMotor = true;
-        revoluteJ.Initialize(this.carBody, this.wheel2, anchor);
+        revoluteJ.Initialize(axle2, this.wheel2, this.wheel2.GetWorldCenter());
         this.motor2 = this.world.b2world.CreateJoint(revoluteJ);
+
+
+
 
 
 
@@ -90,8 +132,8 @@ define(function(){
         // build visual representation of car body
         var material = new THREE.MeshLambertMaterial( { color: 0x248F24 } );
         
-        var geometryBody = new THREE.CubeGeometry(data.w, data.h, 1);
-        var geometryTop = new THREE.CubeGeometry(data.w * 0.5, data.h, 1);
+        var geometryBody = new THREE.CubeGeometry(data.w, data.h * 0.5, 1);
+        var geometryTop = new THREE.CubeGeometry(data.w * 0.5, data.h * 0.5, 1);
 
         var glcarBody = new THREE.Mesh( geometryBody, material );
         var glcarTop = new THREE.Mesh( geometryTop, material );
@@ -122,24 +164,23 @@ define(function(){
         glWheel1right.rotation.x = Math.PI/2;
         glWheel2right.rotation.x = Math.PI/2;
 
-        glWheel1left.position.x = localXback; // -1.5
-        glWheel2left.position.x = localXfront; // 1.3;
-        glWheel1right.position.x = localXback; // -1.5;
-        glWheel2right.position.x = localXfront; // 1.3;
-
         glWheel1left.position.z = -1;
         glWheel2left.position.z = -1;
         glWheel1right.position.z = 1;
         glWheel2right.position.z = 1;
 
+        glWheel1left.position.x = -1.5;
+        glWheel1right.position.x = -1.5;
 
-        glWheel1left.position.y = localY;
-        glWheel2left.position.y = localY;
-        glWheel1right.position.y = localY;
-        glWheel2right.position.y = localY;
+        glWheel2left.position.x = 1.3;
+        glWheel2right.position.x = 1.3;
 
+        glWheel1left.position.y = 0.4;
+        glWheel2left.position.y = 0.4;
+        glWheel1right.position.y = 0.4;
+        glWheel2right.position.y = 0.4;
 
-        // attach wheels to the car        
+        // attach wheels to the car
         glcarBody.add(glWheel1left);
         glcarBody.add(glWheel2left);
         glcarBody.add(glWheel1right);
@@ -150,7 +191,7 @@ define(function(){
 
         this.update = function(input) {
 
-            motorSpeed = (this.getSpeed() * 0.7) + 1;
+            motorSpeed = 5 + (this.getSpeed() * 0.7);
 
             // accelerate car            
             this.motor1.SetMotorSpeed(
@@ -158,6 +199,16 @@ define(function(){
 
             this.motor1.SetMaxMotorTorque(
                 input.getKey(input.keyCode.A) || input.getKey(input.keyCode.D) ? motorTorque : 0.5);
+
+            var tension = 800;
+            var force = 50;
+            var speed = 5;
+
+            this.spring1.SetMaxMotorForce(force + Math.abs(tension * Math.pow(this.spring1.GetJointTranslation(), 2)));
+            this.spring1.SetMotorSpeed((this.spring1.GetMotorSpeed() - speed * this.spring1.GetJointTranslation()) * 0.4);
+            this.spring2.SetMaxMotorForce(force + Math.abs(tension * Math.pow(this.spring2.GetJointTranslation(), 2)));
+            this.spring2.SetMotorSpeed((this.spring2.GetMotorSpeed() - speed * this.spring2.GetJointTranslation()) * 0.4);
+
 
             // it will be easier to flip car up side down
             // but almost impossible if it is in correct position
@@ -198,6 +249,15 @@ define(function(){
             glWheel2left.rotation.y = wheel2Def.angle;
             glWheel1right.rotation.y = wheel1Def.angle;
             glWheel2right.rotation.y = wheel2Def.angle;
+
+            var wheel1Y = this.spring1.GetJointTranslation();
+            var wheel2Y = this.spring2.GetJointTranslation();
+
+            glWheel1left.position.y = wheel1Y + 0.6;
+            glWheel2left.position.y = wheel2Y + 0.6;
+            
+            glWheel1right.position.y = wheel1Y + 0.6;
+            glWheel2right.position.y = wheel2Y + 0.6;
         }
 
         this.getSpeed = function() {
