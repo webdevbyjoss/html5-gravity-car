@@ -14,7 +14,7 @@ define([
 		levelSeed = 1;
 		rand.seed(levelSeed);
 
-		var length = rand.nextInt(1, 1000);
+		var length = 200; // rand.nextInt(1, 1000);
 
 		var x = 0;
 		var y = 18;
@@ -50,7 +50,7 @@ define([
 			// lets descide where we should move
 			yradians += Math.PI * 0.2;
 
-			y = 17 + Math.sin(1.5 * yradians)
+			y = 17 + Math.sin(yradians)
 				+ 2 * Math.sin(0.5 * yradians)
 				+ 3 * Math.sin(0.3 * yradians)
 				+ 10 * Math.sin(0.05 * yradians);
@@ -65,9 +65,9 @@ define([
 			x += 3; // rand.next() * ;
 
 			// create oriented platform
-			mx = avg(prevx + w, x);
+			mx = avg(prevx, x);
 			my = avg(prevy, y);
-			dx = x - (prevx + w);
+			dx = x - prevx;
 			dy = y - prevy;
 			mw = Math.sqrt(dx*dx + dy*dy);
 

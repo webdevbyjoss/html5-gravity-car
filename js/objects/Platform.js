@@ -25,9 +25,10 @@ define(function(){
 	    this.fixture = this.obj.CreateFixture(fixDef);
 
 	    // build visual representation
-	   	var geometry = new THREE.CubeGeometry(data.box.w, data.box.h, 3);
+	   	var geometry = new THREE.CubeGeometry(data.box.w, data.box.h, 60);
 		var material = new THREE.MeshLambertMaterial( { color: 0x75A3FF } );
 		var cube = new THREE.Mesh( geometry, material );
+		cube.receiveShadow = true;
 		world.scene.add( cube );
 
 		// as platforms are never moved for now 

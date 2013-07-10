@@ -15,11 +15,11 @@ define(function(){
 
         // motor 
         var motorSpeed = 1;
-        var motorTorque = 15;
+        var motorTorque = 10;
 
         // manual stabilization force
-        var torqueForce = 0.5;
-        var stabilizationForce = 0.5;
+        var torqueForce = 5;
+        var stabilizationForce = 5; // currently commented out
 
 
   	    var fixDef = Object.create(this.world.fixDef);
@@ -60,10 +60,10 @@ define(function(){
         fixDef.friction = 0.5;
         fixDef.restitution = 0.2;
 
-        bodyDef.position.x = 3.2;
+        bodyDef.position.x = data.posx - 1.8;
         axle1 = this.world.b2world.CreateBody(bodyDef);
 
-        bodyDef.position.x = 6.5;
+        bodyDef.position.x = data.posx + 1.5;
         axle2 = this.world.b2world.CreateBody(bodyDef);
 
         fixDef.shape = new b2PolygonShape();
@@ -136,6 +136,7 @@ define(function(){
         var geometryTop = new THREE.CubeGeometry(data.w * 0.5, data.h * 0.5, 1);
 
         var glcarBody = new THREE.Mesh( geometryBody, material );
+        glcarBody.castShadow = true;
         var glcarTop = new THREE.Mesh( geometryTop, material );
 
         glcarTop.position.y = -0.8;
@@ -212,19 +213,20 @@ define(function(){
 
             // it will be easier to flip car up side down
             // but almost impossible if it is in correct position
-            var carAngle = normalizeAngle(this.carBody.GetAngle());
-            var carTorquoRatio = Math.sin(carAngle * 0.5); // strongest when car is up-side-down
+            // var carAngle = normalizeAngle(this.carBody.GetAngle());
+            // var carTorquoRatio = Math.sin(carAngle * 0.5); // strongest when car is up-side-down
             if (input.getKey(input.keyCode.A)) {
-                this.carBody.ApplyTorque(torqueForce * carTorquoRatio * 0.5);
+                this.carBody.ApplyTorque(torqueForce * 4);
             }
             if (input.getKey(input.keyCode.D)) {
-                this.carBody.ApplyTorque(-1 * torqueForce * carTorquoRatio * 0.5);
+                this.carBody.ApplyTorque(-1 * torqueForce * 4);
             }
+            
             if (input.getKeyDown(input.keyCode.A)) {
-                this.carBody.ApplyTorque(torqueForce * 500);
+                this.carBody.ApplyTorque(torqueForce * 60);
             }
             if (input.getKeyDown(input.keyCode.D)) {
-                this.carBody.ApplyTorque(-1 * (torqueForce) * 500);
+                this.carBody.ApplyTorque(-1 * (torqueForce) * 60);
             }
             
             // car stabilization, lets apply the torque force into opposit direction

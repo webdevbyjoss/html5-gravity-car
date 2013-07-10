@@ -17,6 +17,20 @@ define([
 	    this.renderer = new THREE.WebGLRenderer({
 	    	canvas: this.glDomElem
 	    });
+
+	    // this.renderer.shadowMapEnabled = true;
+		// this.renderer.shadowMapSoft = true;
+		
+		this.renderer.shadowCameraNear = 3;
+		this.renderer.shadowCameraFar = this.camera.far;
+		this.renderer.shadowCameraFov = 50;
+
+		this.renderer.shadowMapBias = 0.0039;
+		this.renderer.shadowMapDarkness = 0.5;
+		this.renderer.shadowMapWidth = 1024;
+		this.renderer.shadowMapHeight = 1024;
+
+
 		this.camera.position.x = 30;
 		this.camera.position.y = 30;
 		this.camera.position.z = -15;
@@ -26,14 +40,22 @@ define([
 		var debugElem = document.getElementById('cam');
 
 		// add subtle blue ambient lighting
-		var ambientLight = new THREE.AmbientLight(0x004444);
+		/*
+		var ambientLight = new THREE.AmbientLight(0xEEEEEE);
 		this.scene.add(ambientLight);
+		 */
 
-		// directional lighting
-		var directionalLight = new THREE.DirectionalLight(0xffffff);
-		directionalLight.position.set(30, 30, -20).normalize();
+		var directionalLight = new THREE.DirectionalLight(0xEEEEEE);
+		directionalLight.position.set(-20, -40, -10).normalize();
 		this.scene.add(directionalLight);
 
+		
+		// directional lighting
+		var light = new THREE.SpotLight(0xFFFFFF);
+		light.position.set(70, 150, -20);
+		light.castShadow = true;
+		light.shadowCameraVisible = true;
+		this.scene.add(light);
 
 		// init physisc
 	    this.b2world = new b2World(
@@ -51,7 +73,7 @@ define([
 
 	    // create car
 	    this.car = new Car(this, {
-            posx: 5,
+            posx: 30,
             posy: 13,
 			w: 5,
             h: 1.5,
@@ -72,7 +94,7 @@ define([
 	    this.update = function(input) {
 
 	    	this.b2world.Step(
-	               1 / 60   //frame-rate
+	               1 / 50   //frame-rate
 	            ,  10       //velocity iterations
 	            ,  10       //position iterations
 	        );
@@ -121,7 +143,6 @@ define([
 	    	var offsety = -1 * (pos.y * pixelToMeter / 2 - 250);
 	    	this.b2world.DrawDebugData(-offsetx, offsety);
 	    };
-
 
 	}
 });
