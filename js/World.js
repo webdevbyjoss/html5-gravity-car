@@ -46,7 +46,7 @@ define([
 		 */
 
 		var directionalLight = new THREE.DirectionalLight(0xEEEEEE);
-		directionalLight.position.set(-20, -40, -10).normalize();
+		directionalLight.position.set(-20, -40, -50).normalize();
 		this.scene.add(directionalLight);
 
 		

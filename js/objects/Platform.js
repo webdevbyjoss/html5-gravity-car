@@ -25,7 +25,7 @@ define(function(){
 	    this.fixture = this.obj.CreateFixture(fixDef);
 
 	    // build visual representation
-	   	var geometry = new THREE.CubeGeometry(data.box.w, data.box.h, 60);
+	   	var geometry = new THREE.CubeGeometry(data.box.w, data.box.h, 0);
 		var material = new THREE.MeshLambertMaterial( { color: 0x75A3FF } );
 		var cube = new THREE.Mesh( geometry, material );
 		cube.receiveShadow = true;
@@ -36,6 +36,7 @@ define(function(){
 		this.bodyDef2 = this.fixture.GetBody().GetDefinition();
 		cube.position.x = this.bodyDef2.position.x;
 		cube.position.y = this.bodyDef2.position.y;
+		cube.position.z = -0.2;
 		cube.rotation.z = this.bodyDef2.angle;
 
 		// console.log(this.bodyDef2);

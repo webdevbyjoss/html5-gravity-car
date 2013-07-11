@@ -81,8 +81,8 @@ define(function(){
         prismaticJointDef.Initialize(this.carBody, axle1, axle1Pos,
             new b2Vec2(0, 0.5)
         );
-        prismaticJointDef.lowerTranslation = -0.3;
-        prismaticJointDef.upperTranslation = 0.3;
+        prismaticJointDef.lowerTranslation = -0.2;
+        prismaticJointDef.upperTranslation = 0;
         prismaticJointDef.enableLimit = true;
         prismaticJointDef.enableMotor = true;
         this.spring1 = this.world.b2world.CreateJoint(prismaticJointDef);
@@ -132,14 +132,14 @@ define(function(){
         // build visual representation of car body
         var material = new THREE.MeshLambertMaterial( { color: 0x248F24 } );
         
-        var geometryBody = new THREE.CubeGeometry(data.w, data.h * 0.5, 1);
-        var geometryTop = new THREE.CubeGeometry(data.w * 0.5, data.h * 0.5, 1);
+        var geometryBody = new THREE.CubeGeometry(data.w, data.h * 0.5, 0);
+        var geometryTop = new THREE.CubeGeometry(data.w * 0.5, data.h * 0.5, 0);
 
         var glcarBody = new THREE.Mesh( geometryBody, material );
         glcarBody.castShadow = true;
         var glcarTop = new THREE.Mesh( geometryTop, material );
 
-        glcarTop.position.y = -0.8;
+        glcarTop.position.y = -0.7;
         glcarTop.position.x = -0.4;
         glcarBody.add(glcarTop);
 
@@ -147,7 +147,7 @@ define(function(){
         var wheelgeometry = new THREE.CylinderGeometry(
             data.wheelRadius,
             data.wheelRadius,
-            0.25,
+            0,
             8,
             1,
             false
@@ -165,10 +165,11 @@ define(function(){
         glWheel1right.rotation.x = Math.PI/2;
         glWheel2right.rotation.x = Math.PI/2;
 
-        glWheel1left.position.z = -1;
-        glWheel2left.position.z = -1;
-        glWheel1right.position.z = 1;
-        glWheel2right.position.z = 1;
+        glWheel1left.position.z = -0.1;
+        glWheel2left.position.z = -0.1;
+        glWheel1right.position.z = 0.1;
+        glWheel2right.position.z = 0.1;
+
 
         glWheel1left.position.x = -1.5;
         glWheel1right.position.x = -1.5;
@@ -203,7 +204,7 @@ define(function(){
 
             var tension = 800;
             var force = 50;
-            var speed = 5;
+            var speed = 10;
 
             this.spring1.SetMaxMotorForce(force + Math.abs(tension * Math.pow(this.spring1.GetJointTranslation(), 2)));
             this.spring1.SetMotorSpeed((this.spring1.GetMotorSpeed() - speed * this.spring1.GetJointTranslation()) * 0.4);
@@ -255,11 +256,11 @@ define(function(){
             var wheel1Y = this.spring1.GetJointTranslation();
             var wheel2Y = this.spring2.GetJointTranslation();
 
-            glWheel1left.position.y = wheel1Y + 0.6;
-            glWheel2left.position.y = wheel2Y + 0.6;
+            glWheel1left.position.y = 0.8 + wheel1Y * 1.6;
+            glWheel2left.position.y = 0.8 + wheel2Y * 1.6;
             
-            glWheel1right.position.y = wheel1Y + 0.6;
-            glWheel2right.position.y = wheel2Y + 0.6;
+            glWheel1right.position.y = 0.8 + wheel1Y * 1.6;
+            glWheel2right.position.y = 0.8 + wheel2Y * 1.6;
         }
 
         this.getSpeed = function() {
