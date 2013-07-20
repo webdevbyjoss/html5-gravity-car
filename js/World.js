@@ -1,10 +1,12 @@
 define([
 	'app/objects/Platform',
 	'app/objects/Car',
+	'app/objects/RallyCar',
 	'app/objects/Road'
 ], function(
 	Platform,
 	Car,
+	RallyCar,
 	Road
 ){
 
@@ -32,7 +34,7 @@ define([
 
 
 		this.camera.position.x = 30;
-		this.camera.position.y = 30;
+		this.camera.position.y = 17;
 		this.camera.position.z = -15;
 		this.camera.rotation.z = Math.PI;
 		this.camera.rotation.y = Math.PI;
@@ -76,7 +78,7 @@ define([
             posx: 30,
             posy: 13,
 			w: 5,
-            h: 1.5,
+            h: 1.7,
             wheelRadius: 0.6
         });
 
@@ -106,11 +108,12 @@ define([
 	    	// update camera position according to car body
 	    	var pos =  this.car.carBody.GetPosition();
 
-			var velmodule = this.car.getSpeed();
+			var velmodule = this.car.getSpeedPow2();
 			debugElem.value = velmodule;
 
 			// update acmera Z coordinate softly
 			var cameraTargetZ = -10 - (velmodule * 0.5);
+			var cameraTargetY = pos.y;
 
 			var cameraSpeed = Math.abs(cameraTargetZ - this.camera.position.z) * 0.1;
 
@@ -120,10 +123,23 @@ define([
 				this.camera.position.z -= cameraSpeed;
 			}
 
+			var angVel = this.car.carBody.GetLinearVelocity();
+
+			var camSpeedY = Math.abs(angVel.y) * 0.015;
+			if (camSpeedY < 0.02) {
+				camSpeedY = 0.02;
+			}
+			if (Math.abs(this.camera.position.y - cameraTargetY) > 0.5) {
+				if (this.camera.position.y < cameraTargetY) {
+					this.camera.position.y += camSpeedY;
+				} else {
+					this.camera.position.y -= camSpeedY;
+				}
+			}
+
 			var camShiftX = (Math.abs(this.camera.position.z) - 10);
 			this.camera.position.x = pos.x + 5 + camShiftX * 0.5;
-			this.camera.position.y = pos.y - 2 - camShiftX * 0.3;
-
+			// this.camera.position.y = pos.y - 2 - camShiftX * 0.3;
 
 			// output some debug on SPACE
 			if (input.getKeyDown(input.keyCode.SPACE)) {

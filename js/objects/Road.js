@@ -11,7 +11,18 @@ define([
 		
 		var rand = new random();
 
+		// GOOD level coeficients examples
+		levelSeed = 0; // base constructor
+		levelSeed = 0.5;
 		levelSeed = 1;
+		
+		/*
+		levelSeed = 1.6;
+		levelSeed = 2;
+		levelSeed = 5;
+		*/
+
+
 		rand.seed(levelSeed);
 
 		var length = 500; // rand.nextInt(1, 1000);
@@ -50,10 +61,10 @@ define([
 			// lets descide where we should move
 			yradians += Math.PI * 0.2;
 
-			y = 17 + Math.sin(yradians)
-				+ 2 * Math.sin(0.5 * yradians)
-				+ 3 * Math.sin(0.3 * yradians)
-				+ 10 * Math.sin(0.05 * yradians);
+			y = 17 + Math.sin(levelSeed * yradians)
+				+ 2 * Math.sin(0.5 * levelSeed * yradians)
+				+ 3 * Math.sin(0.3 * levelSeed *  yradians)
+				+ 10 * Math.sin(0.05 * levelSeed * yradians);
 			/*
 			y = 17 
 				+ 5 * Math.sin(2 * yradians)

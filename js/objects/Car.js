@@ -11,14 +11,21 @@ define(function(){
         this.axle2 = null;
         this.spring1 = null;
         this.spring2 = null;
+
         this._vel = null;
 
-        // motor 
-        var motorSpeed = 1;
-        var motorTorque = 10;
+        // motor
+
+        // LEVEL 1
+        // var motorSpeed = 1;
+        // var motorTorque = 10;
+
+        var motorSpeed = 3;
+        var motorTorque = 20;
+
 
         // manual stabilization force
-        var torqueForce = 5;
+        var torqueForce = 2;
         var stabilizationForce = 5; // currently commented out
 
 
@@ -45,7 +52,7 @@ define(function(){
         fixDef.shape.SetAsOrientedBox(
             data.w * 0.25,
             data.h * 0.25,
-            new b2Vec2(-0.25, -1), 0
+            new b2Vec2(-0.25, -0.75), 0
         );
         this.carBody.CreateFixture(fixDef);
 
@@ -132,23 +139,23 @@ define(function(){
         // build visual representation of car body
         var material = new THREE.MeshLambertMaterial( { color: 0x248F24 } );
         
-        var geometryBody = new THREE.CubeGeometry(data.w, data.h * 0.5, 0);
-        var geometryTop = new THREE.CubeGeometry(data.w * 0.5, data.h * 0.5, 0);
+        var geometryBody = new THREE.CubeGeometry(data.w * 1.05, data.h * 0.6, 0);
+        var geometryTop = new THREE.CubeGeometry(data.w * 0.55, data.h * 0.5, 0);
 
         var glcarBody = new THREE.Mesh( geometryBody, material );
         glcarBody.castShadow = true;
         var glcarTop = new THREE.Mesh( geometryTop, material );
 
-        glcarTop.position.y = -0.7;
+        glcarTop.position.y = -0.8;
         glcarTop.position.x = -0.4;
         glcarBody.add(glcarTop);
 
         // create wheels
         var wheelgeometry = new THREE.CylinderGeometry(
-            data.wheelRadius,
-            data.wheelRadius,
+            data.wheelRadius * 1.15,
+            data.wheelRadius * 1.15,
             0,
-            8,
+            16,
             1,
             false
         );
@@ -165,8 +172,8 @@ define(function(){
         glWheel2left.position.z = -0.1;
 
 
-        glWheel1left.position.x = -1.5;
-        glWheel2left.position.x = 1.3;
+        glWheel1left.position.x = -1.8;
+        glWheel2left.position.x = 1.4;
 
         glWheel1left.position.y = 0.4;
         glWheel2left.position.y = 0.4;
@@ -179,7 +186,7 @@ define(function(){
 
         this.update = function(input) {
 
-            motorSpeed = 5 + (this.getSpeed() * 0.7);
+            motorSpeed = 5 + (this.getSpeedPow2() * 0.7);
 
             // accelerate car            
             this.motor1.SetMotorSpeed(
@@ -189,7 +196,7 @@ define(function(){
                 input.getKey(input.keyCode.A) || input.getKey(input.keyCode.D) ? motorTorque : 0.5);
 
             var tension = 800;
-            var force = 20;
+            var force = 30;
             var speed = 10;
 
             this.spring1.SetMaxMotorForce(force + Math.abs(tension * Math.pow(this.spring1.GetJointTranslation(), 2)));
@@ -240,11 +247,11 @@ define(function(){
             var wheel1Y = this.spring1.GetJointTranslation();
             var wheel2Y = this.spring2.GetJointTranslation();
 
-            glWheel1left.position.y = 0.8 + wheel1Y * 1.6;
-            glWheel2left.position.y = 0.8 + wheel2Y * 1.6;
+            glWheel1left.position.y = wheel1Y * 1.7 + 0.65;
+            glWheel2left.position.y = wheel2Y * 1.7 + 0.65;
         }
 
-        this.getSpeed = function() {
+        this.getSpeedPow2 = function() {
             this._vel = this.carBody.GetLinearVelocity();
             return Math.sqrt(this._vel.x * this._vel.x + this._vel.y * this._vel.y);
         }
