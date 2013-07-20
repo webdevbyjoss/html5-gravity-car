@@ -14,7 +14,7 @@ define([
 		levelSeed = 1;
 		rand.seed(levelSeed);
 
-		var length = 200; // rand.nextInt(1, 1000);
+		var length = 500; // rand.nextInt(1, 1000);
 
 		var x = 0;
 		var y = 18;

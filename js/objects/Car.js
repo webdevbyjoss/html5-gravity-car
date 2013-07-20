@@ -157,37 +157,23 @@ define(function(){
         var glWheel1left = new THREE.Mesh( wheelgeometry, wheelMaterial );
         var glWheel2left = new THREE.Mesh( wheelgeometry, wheelMaterial );
 
-        var glWheel1right = new THREE.Mesh( wheelgeometry, wheelMaterial );
-        var glWheel2right = new THREE.Mesh( wheelgeometry, wheelMaterial );
 
         glWheel1left.rotation.x = Math.PI/2;
         glWheel2left.rotation.x = Math.PI/2;
-        glWheel1right.rotation.x = Math.PI/2;
-        glWheel2right.rotation.x = Math.PI/2;
 
         glWheel1left.position.z = -0.1;
         glWheel2left.position.z = -0.1;
-        glWheel1right.position.z = 0.1;
-        glWheel2right.position.z = 0.1;
 
 
         glWheel1left.position.x = -1.5;
-        glWheel1right.position.x = -1.5;
-
         glWheel2left.position.x = 1.3;
-        glWheel2right.position.x = 1.3;
 
         glWheel1left.position.y = 0.4;
         glWheel2left.position.y = 0.4;
-        glWheel1right.position.y = 0.4;
-        glWheel2right.position.y = 0.4;
 
         // attach wheels to the car
         glcarBody.add(glWheel1left);
         glcarBody.add(glWheel2left);
-        glcarBody.add(glWheel1right);
-        glcarBody.add(glWheel2right);
-
 
         world.scene.add( glcarBody );
 
@@ -203,7 +189,7 @@ define(function(){
                 input.getKey(input.keyCode.A) || input.getKey(input.keyCode.D) ? motorTorque : 0.5);
 
             var tension = 800;
-            var force = 50;
+            var force = 20;
             var speed = 10;
 
             this.spring1.SetMaxMotorForce(force + Math.abs(tension * Math.pow(this.spring1.GetJointTranslation(), 2)));
@@ -250,17 +236,12 @@ define(function(){
             var wheel2Def = this.wheel2.GetDefinition();
             glWheel1left.rotation.y = wheel1Def.angle;
             glWheel2left.rotation.y = wheel2Def.angle;
-            glWheel1right.rotation.y = wheel1Def.angle;
-            glWheel2right.rotation.y = wheel2Def.angle;
 
             var wheel1Y = this.spring1.GetJointTranslation();
             var wheel2Y = this.spring2.GetJointTranslation();
 
             glWheel1left.position.y = 0.8 + wheel1Y * 1.6;
             glWheel2left.position.y = 0.8 + wheel2Y * 1.6;
-            
-            glWheel1right.position.y = 0.8 + wheel1Y * 1.6;
-            glWheel2right.position.y = 0.8 + wheel2Y * 1.6;
         }
 
         this.getSpeed = function() {
