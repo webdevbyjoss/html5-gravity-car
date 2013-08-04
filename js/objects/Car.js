@@ -20,12 +20,12 @@ define(function(){
         // var motorSpeed = 1;
         // var motorTorque = 10;
 
-        var motorSpeed = 3;
-        var motorTorque = 20;
+        var motorSpeed = 0.3;
+        var motorTorque = 10;
 
 
         // manual stabilization force
-        var torqueForce = 2;
+        var torqueForce = 0;
         var stabilizationForce = 5; // currently commented out
 
 
@@ -155,7 +155,7 @@ define(function(){
             data.wheelRadius * 1.15,
             data.wheelRadius * 1.15,
             0,
-            16,
+            8,
             1,
             false
         );

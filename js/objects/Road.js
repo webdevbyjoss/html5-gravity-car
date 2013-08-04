@@ -41,6 +41,14 @@ define([
 		var dy = 0;
 		var angle = 0;
 
+
+		var p1 = rand.nextInt(1, 4);// 2;
+		var p2 = rand.nextInt(1, 6); // 3
+		var p3 = rand.nextInt(1, 20);// 10;
+		var r1 = rand.next() / 2; // 0.5
+		var r2 = rand.next() / 6; // 0.3
+		var r3 = rand.next() / 20// 0.05;
+
 		// draw road
 		for (var i = 0; i <= length; i++) {
 			/*
@@ -61,10 +69,10 @@ define([
 			// lets descide where we should move
 			yradians += Math.PI * 0.2;
 
-			y = 17 + Math.sin(levelSeed * yradians)
-				+ 2 * Math.sin(0.5 * levelSeed * yradians)
-				+ 3 * Math.sin(0.3 * levelSeed *  yradians)
-				+ 10 * Math.sin(0.05 * levelSeed * yradians);
+			y = 17 + Math.sin(yradians)
+				+ p1 * Math.sin(r1 * yradians)
+				+ p2 * Math.sin(r2 *  yradians)
+				+ p3 * Math.sin(r3 * yradians);
 			/*
 			y = 17 
 				+ 5 * Math.sin(2 * yradians)
@@ -107,6 +115,10 @@ define([
 		    		'y': y
 		    	});
 		    }
+		}
+
+		this.update = function() {
+			
 		}
 
 	}

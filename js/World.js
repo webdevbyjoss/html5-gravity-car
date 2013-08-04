@@ -59,7 +59,7 @@ define([
 		light.shadowCameraVisible = true;
 		this.scene.add(light);
 
-		// init physisc
+		// init physics
 	    this.b2world = new b2World(
 	        new b2Vec2(0, 10),   //gravity
 	        true                 //allow sleep
@@ -102,6 +102,7 @@ define([
 	        );
 	        this.b2world.ClearForces();
 
+	       	this.road.update();
 
 	    	this.car.update(input);
 
