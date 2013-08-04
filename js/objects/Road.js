@@ -73,6 +73,9 @@ define([
 				+ p1 * Math.sin(r1 * yradians)
 				+ p2 * Math.sin(r2 *  yradians)
 				+ p3 * Math.sin(r3 * yradians);
+
+			// See also: http://www.wolframalpha.com/input/?i=2+*+sin%280.5+*+x%29+%2B+3+*+sin%280.3+*+x%29+%2B+10+*+sin%280.05+*+x%29
+
 			/*
 			y = 17 
 				+ 5 * Math.sin(2 * yradians)
@@ -118,7 +121,7 @@ define([
 		}
 
 		this.update = function() {
-			
+
 		}
 
 	}

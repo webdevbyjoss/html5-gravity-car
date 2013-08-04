@@ -16,12 +16,16 @@ define(function(){
 
         // motor
 
+        // LEVEL 0
+        // var motorSpeed = 0.3;
+        //var motorTorque = 10;
+
         // LEVEL 1
         // var motorSpeed = 1;
         // var motorTorque = 10;
 
-        var motorSpeed = 0.3;
-        var motorTorque = 10;
+        var motorSpeed = 1;
+        var motorTorque = 20;
 
 
         // manual stabilization force
