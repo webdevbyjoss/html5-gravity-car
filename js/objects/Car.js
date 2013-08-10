@@ -29,7 +29,7 @@ define(function(){
 
 
         // manual stabilization force
-        var torqueForce = 0;
+        var torqueForce = 5;
         var stabilizationForce = 5; // currently commented out
 
 
@@ -211,20 +211,22 @@ define(function(){
 
             // it will be easier to flip car up side down
             // but almost impossible if it is in correct position
-            // var carAngle = normalizeAngle(this.carBody.GetAngle());
-            // var carTorquoRatio = Math.sin(carAngle * 0.5); // strongest when car is up-side-down
+            var carAngle = normalizeAngle(this.carBody.GetAngle());
+            var carTorquoRatio = Math.sin(carAngle * 0.5); // strongest when car is up-side-down
             if (input.getKey(input.keyCode.A)) {
-                this.carBody.ApplyTorque(torqueForce * 4);
+                this.carBody.ApplyTorque(torqueForce);
             }
             if (input.getKey(input.keyCode.D)) {
-                this.carBody.ApplyTorque(-1 * torqueForce * 4);
+                this.carBody.ApplyTorque(-1 * torqueForce);
             }
             
             if (input.getKeyDown(input.keyCode.A)) {
-                this.carBody.ApplyTorque(torqueForce * 60);
+                this.carBody.SetAngularVelocity(0);
+                this.carBody.ApplyTorque(torqueForce * 100);
             }
             if (input.getKeyDown(input.keyCode.D)) {
-                this.carBody.ApplyTorque(-1 * (torqueForce) * 60);
+                this.carBody.SetAngularVelocity(0);
+                this.carBody.ApplyTorque(-1 * (torqueForce) * 100);
             }
             
             // car stabilization, lets apply the torque force into opposit direction

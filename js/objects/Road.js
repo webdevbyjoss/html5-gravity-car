@@ -42,12 +42,12 @@ define([
 		var angle = 0;
 
 
-		var p1 = rand.nextInt(1, 4);// 2;
-		var p2 = rand.nextInt(1, 6); // 3
-		var p3 = rand.nextInt(1, 20);// 10;
-		var r1 = rand.next() / 2; // 0.5
-		var r2 = rand.next() / 6; // 0.3
-		var r3 = rand.next() / 20// 0.05;
+		var p1 = 2; // rand.nextInt(1, 4);// 2;
+		var p2 = 3; // p1; rand.nextInt(1, 6); // 3
+		var p3 = 10; // p1; rand.nextInt(1, 20);// 10;
+		var r1 = 0.5; //rand.next() / 2; // 0.5
+		var r2 = 0.3; // rand.next() / 6; // 0.3
+		var r3 = 0.05; // rand.next() / 20// 0.05;
 
 		// draw road
 		for (var i = 0; i <= length; i++) {
@@ -71,11 +71,16 @@ define([
 
 			y = 17 + Math.sin(yradians)
 				+ p1 * Math.sin(r1 * yradians)
+				+ p2 * Math.sin(r1 * yradians)
 				+ p2 * Math.sin(r2 *  yradians)
-				+ p3 * Math.sin(r3 * yradians);
+				+ p1 * Math.sin(r2 *  yradians)
+				+ p3 * Math.sin(r3 * yradians)
+				+ p2 * Math.sin(r3 * yradians)
+				+ p1 * Math.sin(r3 * yradians);
 
 			// See also: http://www.wolframalpha.com/input/?i=2+*+sin%280.5+*+x%29+%2B+3+*+sin%280.3+*+x%29+%2B+10+*+sin%280.05+*+x%29
-
+			// See also: http://www.wolframalpha.com/input/?i=2+*+sin%280.5+*+x%29+%2B+3+*+sin%280.5+*+x%29+%2B+3+*+sin%280.3+*+x%29+%2B+2+*+sin%280.3+*+x%29+%2B+10+*+sin%280.05+*+x%29+%2B+3+*+sin%280.05+*+x%29+%2B+2+*+sin%280.05+*+x%29
+			
 			/*
 			y = 17 
 				+ 5 * Math.sin(2 * yradians)
