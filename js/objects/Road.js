@@ -1,35 +1,30 @@
 define([
 	'random',
 	'app/objects/Platform',
-	'app/objects/Garbage'
+	'app/objects/Garbage',
+	'app/objects/CurveRoadSection',
+	'noisejs/perlin'
 ], function(
 	random,
 	Platform,
-	Garbage
+	Garbage,
+	CurveRoadSection
 ){
 	return function(world, levelSeed) {
 		
 		var rand = new random();
 
 		// GOOD level coeficients examples
-		levelSeed = 0; // base constructor
-		levelSeed = 0.5;
-		levelSeed = 1;
+		levelSeed = 5; // base constructor
 		
-		/*
-		levelSeed = 1.6;
-		levelSeed = 2;
-		levelSeed = 5;
-		*/
-
-
 		rand.seed(levelSeed);
+		noise.seed(levelSeed);
 
-		var length = 500; // rand.nextInt(1, 1000);
+		var length = 500;
 
-		var x = 0;
+		var x = 1;
 		var y = 18;
-		var yradians = 0;
+		var ydelta = 0;
 		var w = 0;
 		var l = 0;
 		var prevx = 0;
@@ -41,7 +36,6 @@ define([
 		var dy = 0;
 		var angle = 0;
 
-
 		var p1 = 2; // rand.nextInt(1, 4);// 2;
 		var p2 = 3; // p1; rand.nextInt(1, 6); // 3
 		var p3 = 10; // p1; rand.nextInt(1, 20);// 10;
@@ -50,7 +44,11 @@ define([
 		var r3 = 0.05; // rand.next() / 20// 0.05;
 
 		// draw road
+		var cr = new CurveRoadSection(world);
+		var end = {};
+
 		for (var i = 0; i <= length; i++) {
+
 			/*
 			var w = 3 + (rand.next() - 0.5) * levelSeed;
 			var l = 5 + (rand.next() - 0.5) * levelSeed;
@@ -66,52 +64,27 @@ define([
 			prevx = x;
 			prevy = y;
 
-			// lets descide where we should move
-			yradians += Math.PI * 0.2;
+			ydelta = noise.simplex2(i, 0); // 1D noise
+			y = 17 + ydelta * 3;
+			x = x + 10; //Math.abs(ydelta * 10);
 
-			y = 17 + Math.sin(yradians)
-				+ p1 * Math.sin(r1 * yradians)
-				+ p2 * Math.sin(r1 * yradians)
-				+ p2 * Math.sin(r2 *  yradians)
-				+ p1 * Math.sin(r2 *  yradians)
-				+ p3 * Math.sin(r3 * yradians)
-				+ p2 * Math.sin(r3 * yradians)
-				+ p1 * Math.sin(r3 * yradians);
-
-			// See also: http://www.wolframalpha.com/input/?i=2+*+sin%280.5+*+x%29+%2B+3+*+sin%280.3+*+x%29+%2B+10+*+sin%280.05+*+x%29
-			// See also: http://www.wolframalpha.com/input/?i=2+*+sin%280.5+*+x%29+%2B+3+*+sin%280.5+*+x%29+%2B+3+*+sin%280.3+*+x%29+%2B+2+*+sin%280.3+*+x%29+%2B+10+*+sin%280.05+*+x%29+%2B+3+*+sin%280.05+*+x%29+%2B+2+*+sin%280.05+*+x%29
-			
-			/*
-			y = 17 
-				+ 5 * Math.sin(2 * yradians)
-				+ 2 * Math.sin(0.5 * yradians)
-				+ 3 * Math.sin(0.3 * yradians)
-				+ 10 * (Math.sin(0.05 * yradians));
-			*/
-
-			x += 3; // rand.next() * ;
-
-			// create oriented platform
-			mx = avg(prevx, x);
-			my = avg(prevy, y);
 			dx = x - prevx;
 			dy = y - prevy;
-			mw = Math.sqrt(dx*dx + dy*dy);
 
-			angle = Math.atan2(dy, dx);
 
-			new Platform(world, {
-				'pos': {'x': mx, 'y': my},
-				'box': {'w': mw, 'h': 0.5},
-				'angle': angle
-			});
+			cr.buildChain(prevx, prevy, x, y);
+
+			/*
+			end = cr.buildCurve(prevx, prevy, dx, dy);
+			x = end.x;
+			y = end.y;
+			*/
 
 			/*
 			if (Math.random() < 0.5) {
 				dropGarbage(x, y - 10);
 			}
 			*/
-
 		}
 
 		function dropGarbage(x, y) {
@@ -131,10 +104,9 @@ define([
 
 	}
 
-
-
 	function avg(a, b) {
 		return (a + b) / 2;
 	}
+
 
 });
