@@ -76,7 +76,7 @@ define([
 	    // create car
 	    this.car = new Car(this, {
             posx: 30,
-            posy: 13,
+            posy: 10,
 			w: 5,
             h: 1.7,
             wheelRadius: 0.6

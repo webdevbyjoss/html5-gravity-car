@@ -25,7 +25,7 @@ define([
 		if (h == 0) {
 			h = 0.1;
 		}
-		
+
 		// we allow negative height, because that will allow us going up and down
 		var absh = Math.abs(h);
 
@@ -43,11 +43,11 @@ define([
 		var a1 = null;
 		var a2 = null;
 		// we will be moving
-		if (h < 0) {
+		/*if (h < 0) {*/
 			// from 0 to Pi when building segment from up to down
-			a1 = 0
-			a2 = Math.PI;
-		}/* else {
+		a1 = 0
+		a2 = Math.PI;
+		/*}/* else {
 			// from Pi to 2*Pi when building segment from down to up
 			a1 = Math.PI
 			a2 = 2*Math.PI;
@@ -59,15 +59,16 @@ define([
 		var y = sy;
 		var dw = 0,
 			dh = 0;
+
 		for (var a = a1; a < a2; a += da) {
 			prevx = x;
 			prevy = y;
 
-			dw = dw + 1 / dx;
-			dh = dh + Math.sin(a) * dy;
+			dw = dx;
+			dh = Math.sin(a) * dy * 1.6; //  * dy;
 
 			x += dw;
-			y -= dh; // y axis has direction to the bottom
+			y += dh; // y axis has direction to the bottom
 
 			this.buildChain(prevx, prevy, x, y);
 		};
@@ -89,7 +90,7 @@ define([
 
 		new Platform(this.world, {
 			'pos': {'x': mx, 'y': my},
-			'box': {'w': mw, 'h': 0.2},
+			'box': {'w': mw, 'h': 0.5},
 			'angle': angle
 		});
 	}

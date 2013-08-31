@@ -15,12 +15,12 @@ define([
 		var rand = new random();
 
 		// GOOD level coeficients examples
-		levelSeed = 5; // base constructor
+		levelSeed = 0; // base constructor
 		
 		rand.seed(levelSeed);
 		noise.seed(levelSeed);
 
-		var length = 500;
+		var length = 30;
 
 		var x = 1;
 		var y = 18;
@@ -36,49 +36,29 @@ define([
 		var dy = 0;
 		var angle = 0;
 
-		var p1 = 2; // rand.nextInt(1, 4);// 2;
-		var p2 = 3; // p1; rand.nextInt(1, 6); // 3
-		var p3 = 10; // p1; rand.nextInt(1, 20);// 10;
-		var r1 = 0.5; //rand.next() / 2; // 0.5
-		var r2 = 0.3; // rand.next() / 6; // 0.3
-		var r3 = 0.05; // rand.next() / 20// 0.05;
-
 		// draw road
 		var cr = new CurveRoadSection(world);
 		var end = {};
 
 		for (var i = 0; i <= length; i++) {
 
-			/*
-			var w = 3 + (rand.next() - 0.5) * levelSeed;
-			var l = 5 + (rand.next() - 0.5) * levelSeed;
-
-			// create horisontal platform
-			new Platform(world, {
-				'pos': {'x': x + (w * 0.5) , 'y': y},
-				'box': {'w': w, 'h': 0.5}
-			});
-			*/
-
 			// shift to next position
 			prevx = x;
 			prevy = y;
 
 			ydelta = noise.simplex2(i, 0); // 1D noise
-			y = 17 + ydelta * 3;
-			x = x + 10; //Math.abs(ydelta * 10);
+			y = 17 + ydelta * 10;
+			x = x + 20; //Math.abs(ydelta * 10);
 
 			dx = x - prevx;
 			dy = y - prevy;
 
 
-			cr.buildChain(prevx, prevy, x, y);
+			// cr.buildChain(prevx, prevy, x, y);
 
-			/*
 			end = cr.buildCurve(prevx, prevy, dx, dy);
 			x = end.x;
 			y = end.y;
-			*/
 
 			/*
 			if (Math.random() < 0.5) {
