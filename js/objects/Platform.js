@@ -15,7 +15,7 @@ define(function(){
 		var dx = x2 - x1;
 		var dy = y2 - y1;
 
-		var mw = Math.sqrt(dx*dx + dy*dy);
+		var mw = Math.sqrt(dx*dx + dy*dy) * 1.05;
 		var angle = Math.atan2(dy, dx);
 
 		this.build({
@@ -28,7 +28,7 @@ define(function(){
 	fn.prototype.build = function(data) {
 
 		// build fixture
-	    this.fixDef = Object.create(this.world.fixDef);
+	    this.fixDef = new b2FixtureDef;
 	    this.fixDef.shape = new b2PolygonShape;
 	    this.fixDef.shape.SetAsBox(data.box.w * 0.5, data.box.h * 0.5);
 	   	this.fixDef.density = 1;
@@ -70,7 +70,6 @@ define(function(){
 	}
 
 	fn.prototype.remove = function() {
-		this.obj.DestroyFixture(this.fixture);
 		this.world.b2world.DestroyBody(this.obj);
 		
 		this.world.scene.remove(this.cube);

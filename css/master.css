@@ -11,3 +11,7 @@ canvas:full-screen {
 canvas:-webkit-full-screen {
 	width: 100% !important;
 }
+
+#cam {
+	border: 1px solid silver;
+}

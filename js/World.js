@@ -71,8 +71,6 @@ define([
 	    this.fixDef.friction = 0.5;
 	    this.fixDef.restitution = 1;
 
-		this.road = new Road(this, 3);
-
 	    // create car
 	    this.car = new Car(this, {
             posx: 30,
@@ -81,6 +79,8 @@ define([
             h: 1.7,
             wheelRadius: 0.6
         });
+
+		this.road = new Road(this);
 
 
 	    //setup debug draw
@@ -95,6 +95,9 @@ define([
 
 	    this.update = function(input) {
 
+	       	this.road.update(this.camera.position.x);
+	    	this.car.update(input);
+
 	    	this.b2world.Step(
 	               1 / 50   //frame-rate
 	            ,  10       //velocity iterations
@@ -102,15 +105,13 @@ define([
 	        );
 	        this.b2world.ClearForces();
 
-	       	this.road.update(this.camera.position.x);
-
-	    	this.car.update(input);
-
 	    	// update camera position according to car body
 	    	var pos =  this.car.carBody.GetPosition();
 
 			var velmodule = this.car.getSpeedPow2();
-			debugElem.value = velmodule;
+			
+			debugElem.value = Math.floor(velmodule * 3.6) + 
+							  'km/h, distance: ' + Math.round(pos.x - 30) + 'm';
 
 			// update acmera Z coordinate softly
 			var cameraTargetZ = -10 - (velmodule * 0.5);

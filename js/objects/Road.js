@@ -1,54 +1,35 @@
 define([
-	'random',
 	'app/objects/Platform',
-	'app/objects/Garbage',
 	'app/objects/CurveRoadSection',
 	'noisejs/perlin'
 ], function(
-	random,
 	Platform,
-	Garbage,
 	CurveRoadSection
 ){
-	var fn = function(world, levelSeed) {
+	var fn = function(world) {
 		
-		var rand = new random();
+		var levelSeed = 3;
+		noise.seed(levelSeed);
 
-		var levelSeed = 0; // base constructor
-		var length = 1;
+		var x = 1;
+		var y = 18;
 
-		this.backLimit = 10;
-		this.frontLimit = 3;
+		this.backLimit = 60;
+		this.frontLimit = 40;
 		this.trackIndex = 0;
+
+		// draw road helper that builds curves from blocks
+		this.cr = new CurveRoadSection(world);
 
 		this.firstNode = null; // start of linked list  [first -> next -> next -> last]
 		this.lastNode = null; // end of linked list
 
-		var end = {};
-		rand.seed(levelSeed);
-		noise.seed(levelSeed);
+		// generate intial chain
+		var initiCurve = this.buildFrom(x, y);
+		this.firstNode = initiCurve.startNode;
+		this.lastNode = initiCurve.lastNode;
 
-		// draw road helper that builds curves from blocks
-		this.cr = new CurveRoadSection(world);
-		var x = 1;
-		var y = 18;
-		for (var i = 0; i <= length; i++) {
-
-			// build blocks chain
-			end = this.buildFrom(x, y);
-
-			// blocks are chained into linked list
-			if (this.firstNode === null) {
-				this.firstNode = end.startNode;
-				this.lastNode = end.lastNode;
-			} else {
-				this.lastNode.next = end.startNode
-				this.lastNode = end.lastNode;
-			}
-
-			x = this.lastNode.x;
-			y = this.lastNode.y;
-		}
+		this.update(this.lastNode.x);
 	}
 
 	fn.prototype.buildFrom = function(prevx, prevy) {

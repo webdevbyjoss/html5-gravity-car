@@ -29,7 +29,7 @@ define(function(){
 
 
         // manual stabilization force
-        var torqueForce = 5;
+        var torqueForce = 2;
         var stabilizationForce = 5; // currently commented out
 
 
@@ -222,11 +222,11 @@ define(function(){
             
             if (input.getKeyDown(input.keyCode.A)) {
                 this.carBody.SetAngularVelocity(0);
-                this.carBody.ApplyTorque(torqueForce * 100);
+                this.carBody.ApplyTorque(torqueForce * 200);
             }
             if (input.getKeyDown(input.keyCode.D)) {
                 this.carBody.SetAngularVelocity(0);
-                this.carBody.ApplyTorque(-1 * (torqueForce) * 100);
+                this.carBody.ApplyTorque(-1 * (torqueForce) * 200);
             }
             
             // car stabilization, lets apply the torque force into opposit direction

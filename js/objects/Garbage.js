@@ -26,8 +26,7 @@ define(function(){
         bodyDef.position.y = params.y + (Math.random() - 0.5) * 5;
         this.world.b2world.CreateBody(bodyDef).CreateFixture(fixDef);
 
-        // create visual representation
-        
+        // TODO: create visual representation
 
 
         this.update = function() {
