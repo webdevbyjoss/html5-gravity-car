@@ -154,6 +154,10 @@ var b2Vec2 = Box2D.Common.Math.b2Vec2,
     b2PrismaticJoint = Box2D.Dynamics.Joints.b2PrismaticJoint,
     b2PrismaticJointDef = Box2D.Dynamics.Joints.b2PrismaticJointDef;
 
+function avg(a, b) {
+    return (a + b) / 2;
+}
+
 // Start the main app logic.
 requirejs(['app/World'], function(World) {
 

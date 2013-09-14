@@ -102,7 +102,7 @@ define([
 	        );
 	        this.b2world.ClearForces();
 
-	       	this.road.update();
+	       	this.road.update(this.camera.position.x);
 
 	    	this.car.update(input);
 

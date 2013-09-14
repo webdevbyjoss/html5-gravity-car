@@ -5,11 +5,10 @@ define([
 ){
 	var fn = function(world) {
 		this.world = world;
-
 	}
 
 	/**
-	 * Start
+	 * Builds curve road section
 	 */
 	fn.prototype.buildCurve = function(sx, sy, w, h) {
 
@@ -60,6 +59,12 @@ define([
 		var dw = 0,
 			dh = 0;
 
+		// as platforms are build into linked list we will save start node here
+		// and return to external world
+		var startNode = null;
+		// current and previous node from linked list
+		var currentNode = null;
+		var prevNode = null;
 		for (var a = a1; a < a2; a += da) {
 			prevx = x;
 			prevy = y;
@@ -70,35 +75,27 @@ define([
 			x += dw;
 			y += dh; // y axis has direction to the bottom
 
-			this.buildChain(prevx, prevy, x, y);
+			// lets save previous node and generate new one
+			prevNode = currentNode;
+			currentNode = new Platform(this.world, prevx, prevy, x, y);
+			if (startNode === null) {
+				startNode = currentNode;
+			} else {
+				prevNode.next = currentNode;
+			}
 		};
 
-		return {'x':x , 'y': y};
+		return {
+			'lastNode': currentNode,
+			'startNode': startNode
+		};
 	};
 
 	// create oriented platform
-	fn.prototype.buildChain = function(x1, y1, x2, y2) {
+	fn.prototype.buildChain = function() {
 
-		mx = avg(x1, x2);
-		my = avg(y1, y2);
-
-		dx = x2 - x1;
-		dy = y2 - y1;
-
-		mw = Math.sqrt(dx*dx + dy*dy);
-		angle = Math.atan2(dy, dx);
-
-		new Platform(this.world, {
-			'pos': {'x': mx, 'y': my},
-			'box': {'w': mw, 'h': 0.5},
-			'angle': angle
-		});
 	}
 	
-	function avg(a, b) {
-		return (a + b) / 2;
-	}
-
 	return fn;
 
 });

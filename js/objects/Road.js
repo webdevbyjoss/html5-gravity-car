@@ -10,7 +10,7 @@ define([
 	Garbage,
 	CurveRoadSection
 ){
-	return function(world, levelSeed) {
+	var fn = function(world, levelSeed) {
 		
 		var rand = new random();
 
@@ -20,7 +20,7 @@ define([
 		rand.seed(levelSeed);
 		noise.seed(levelSeed);
 
-		var length = 30;
+		var length = 1;
 
 		var x = 1;
 		var y = 18;
@@ -37,56 +37,72 @@ define([
 		var angle = 0;
 
 		// draw road
-		var cr = new CurveRoadSection(world);
+		this.cr = new CurveRoadSection(world);
 		var end = {};
+
+		this.backLimit = 10;
+		this.frontLimit = 3;
+		this.trackIndex = 0;
+
+		this.firstNode = null; // start of linked list  [first -> next -> next -> last]
+		this.lastNode = null; // end of linked list
 
 		for (var i = 0; i <= length; i++) {
 
 			// shift to next position
-			prevx = x;
-			prevy = y;
+			end = this.buildFrom(x, y);
 
-			ydelta = noise.simplex2(i, 0); // 1D noise
-			y = 17 + ydelta * 10;
-			x = x + 20; //Math.abs(ydelta * 10);
-
-			dx = x - prevx;
-			dy = y - prevy;
-
-
-			// cr.buildChain(prevx, prevy, x, y);
-
-			end = cr.buildCurve(prevx, prevy, dx, dy);
-			x = end.x;
-			y = end.y;
-
-			/*
-			if (Math.random() < 0.5) {
-				dropGarbage(x, y - 10);
+			if (this.firstNode === null) {
+				this.firstNode = end.startNode;
+				this.lastNode = end.lastNode;
+			} else {
+				this.lastNode.next = end.startNode
+				this.lastNode = end.lastNode;
 			}
-			*/
+
+			x = this.lastNode.x;
+			y = this.lastNode.y;
+		}
+	}
+
+	fn.prototype.buildFrom = function(prevx, prevy) {
+		// initialize next value from noise generation
+		this.trackIndex++;
+		ydelta = noise.simplex2(this.trackIndex, 0); // 1D noise
+
+		y = 17 + ydelta * 10;
+		x = prevx + 20; //Math.abs(ydelta * 10);
+
+		dx = x - prevx;
+		dy = y - prevy;
+
+		return this.cr.buildCurve(prevx, prevy, dx, dy);
+	}
+
+	fn.prototype.update = function(offsetX) {
+		// remove extra nodes from the end
+		var backCut = offsetX - this.backLimit;
+		var nextNode = null;
+		while (this.firstNode.x < backCut) {
+			nextNode = this.firstNode.next;
+			this.firstNode.remove();
+			this.firstNode = nextNode;
 		}
 
-		function dropGarbage(x, y) {
-			// fill it with garbage
-		    var garbage = [];
-		    for(var i = 0; i < 2; ++i) {
-		    	garbage[i] = new Garbage(world, {
-		    		'x': x,
-		    		'y': y
-		    	});
-		    }
+		// add extra nodes to the front
+		var frontCut = offsetX + this.frontLimit;
+		var curve = null;
+		while (this.lastNode.x < frontCut) {
+			curve = this.buildFrom(this.lastNode.x, this.lastNode.y);
+			this.lastNode.next = curve.startNode;
+			this.lastNode = curve.lastNode;
 		}
-
-		this.update = function() {
-
-		}
-
 	}
 
 	function avg(a, b) {
 		return (a + b) / 2;
 	}
 
+	return fn;
 
 });
