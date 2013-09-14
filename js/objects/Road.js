@@ -14,31 +14,8 @@ define([
 		
 		var rand = new random();
 
-		// GOOD level coeficients examples
-		levelSeed = 0; // base constructor
-		
-		rand.seed(levelSeed);
-		noise.seed(levelSeed);
-
+		var levelSeed = 0; // base constructor
 		var length = 1;
-
-		var x = 1;
-		var y = 18;
-		var ydelta = 0;
-		var w = 0;
-		var l = 0;
-		var prevx = 0;
-		var prevy = 0;
-		var mx = 0;
-		var my = 0;
-		var mw = 0;
-		var dx = 0;
-		var dy = 0;
-		var angle = 0;
-
-		// draw road
-		this.cr = new CurveRoadSection(world);
-		var end = {};
 
 		this.backLimit = 10;
 		this.frontLimit = 3;
@@ -47,11 +24,20 @@ define([
 		this.firstNode = null; // start of linked list  [first -> next -> next -> last]
 		this.lastNode = null; // end of linked list
 
+		var end = {};
+		rand.seed(levelSeed);
+		noise.seed(levelSeed);
+
+		// draw road helper that builds curves from blocks
+		this.cr = new CurveRoadSection(world);
+		var x = 1;
+		var y = 18;
 		for (var i = 0; i <= length; i++) {
 
-			// shift to next position
+			// build blocks chain
 			end = this.buildFrom(x, y);
 
+			// blocks are chained into linked list
 			if (this.firstNode === null) {
 				this.firstNode = end.startNode;
 				this.lastNode = end.lastNode;
@@ -98,11 +84,7 @@ define([
 			this.lastNode = curve.lastNode;
 		}
 	}
-
-	function avg(a, b) {
-		return (a + b) / 2;
-	}
-
+	
 	return fn;
 
 });
