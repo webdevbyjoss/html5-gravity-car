@@ -71,7 +71,6 @@ define(function(){
 
 	fn.prototype.remove = function() {
 		this.world.b2world.DestroyBody(this.obj);
-		
 		this.world.scene.remove(this.cube);
 
 		this.fixDef = null;
@@ -79,6 +78,7 @@ define(function(){
 		this.obj = null;
 		this.fixture = null;
 		this.cube = null;
+		this.next = null;
 	}
 
 	return fn;

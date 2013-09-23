@@ -10,7 +10,7 @@ define([
 	Road
 ){
 
-	return function() {
+	var fn = function() {
 		
 		// init WebGL
 	    this.glDomElem = document.getElementById("main");
@@ -39,7 +39,7 @@ define([
 		this.camera.rotation.z = Math.PI;
 		this.camera.rotation.y = Math.PI;
 
-		var debugElem = document.getElementById('cam');
+		this.debugElem = document.getElementById('cam');
 
 		// add subtle blue ambient lighting
 		/*
@@ -80,7 +80,7 @@ define([
             wheelRadius: 0.6
         });
 
-		this.road = new Road(this);
+		this.road = new Road(this, 5);
 
 
 	    //setup debug draw
@@ -92,75 +92,81 @@ define([
 	        debugDraw.SetLineThickness(1.0);
 	        debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
 	        this.b2world.SetDebugDraw(debugDraw);
-
-	    this.update = function(input) {
-
-	       	this.road.update(this.camera.position.x);
-	    	this.car.update(input);
-
-	    	this.b2world.Step(
-	               1 / 50   //frame-rate
-	            ,  10       //velocity iterations
-	            ,  10       //position iterations
-	        );
-	        this.b2world.ClearForces();
-
-	    	// update camera position according to car body
-	    	var pos =  this.car.carBody.GetPosition();
-
-			var velmodule = this.car.getSpeedPow2();
-			
-			debugElem.value = Math.floor(velmodule * 3.6) + 
-							  'km/h, distance: ' + Math.round(pos.x - 30) + 'm';
-
-			// update acmera Z coordinate softly
-			var cameraTargetZ = -10 - (velmodule * 0.5);
-			var cameraTargetY = pos.y;
-
-			var cameraSpeed = Math.abs(cameraTargetZ - this.camera.position.z) * 0.1;
-
-			if (this.camera.position.z < cameraTargetZ) {
-				this.camera.position.z += cameraSpeed;
-			} else {
-				this.camera.position.z -= cameraSpeed;
-			}
-
-			var angVel = this.car.carBody.GetLinearVelocity();
-
-			var camSpeedY = Math.abs(angVel.y) * 0.015;
-			if (camSpeedY < 0.02) {
-				camSpeedY = 0.02;
-			}
-			if (Math.abs(this.camera.position.y - cameraTargetY) > 0.5) {
-				if (this.camera.position.y < cameraTargetY) {
-					this.camera.position.y += camSpeedY;
-				} else {
-					this.camera.position.y -= camSpeedY;
-				}
-			}
-
-			var camShiftX = (Math.abs(this.camera.position.z) - 10);
-			this.camera.position.x = pos.x + 5 + camShiftX * 0.5;
-			// this.camera.position.y = pos.y - 2 - camShiftX * 0.3;
-
-			// output some debug on SPACE
-			if (input.getKeyDown(input.keyCode.SPACE)) {
-
-			}
-	    };
-
-	    this.render = function() {
-
-	    	this.renderer.render(this.scene, this.camera);
-
-	    	// render debug physics output
-	    	var pixelToMeter = 30;
-	    	
-	    	var pos = this.car.carBody.GetPosition();
-	    	var offsetx = pos.x * pixelToMeter / 2 - 100;
-	    	var offsety = -1 * (pos.y * pixelToMeter / 2 - 250);
-	    	this.b2world.DrawDebugData(-offsetx, offsety);
-	    };
-
 	}
+
+	fn.prototype.update = function(input) {
+
+       	this.road.update(this.camera.position.x);
+    	this.car.update(input);
+
+    	this.b2world.Step(
+               1 / 35   //frame-rate
+            ,  10       //velocity iterations
+            ,  10       //position iterations
+        );
+        this.b2world.ClearForces();
+
+    	// update camera position according to car body
+    	var pos =  this.car.carBody.GetPosition();
+
+		var velmodule = this.car.getSpeedPow2();
+		
+		this.debugElem.value = Math.floor(velmodule * 3.6) + 
+						  'km/h, distance: ' + Math.round(pos.x - 30) + 'm';
+
+		// update acmera Z coordinate softly
+		var cameraTargetZ = -10 - (velmodule * 0.5);
+		var cameraTargetY = pos.y;
+
+		var cameraSpeed = Math.abs(cameraTargetZ - this.camera.position.z) * 0.1;
+
+		if (this.camera.position.z < cameraTargetZ) {
+			this.camera.position.z += cameraSpeed;
+		} else {
+			this.camera.position.z -= cameraSpeed;
+		}
+
+		var angVel = this.car.carBody.GetLinearVelocity();
+
+		var camSpeedY = Math.abs(angVel.y) * 0.015;
+		if (camSpeedY < 0.02) {
+			camSpeedY = 0.02;
+		}
+		if (Math.abs(this.camera.position.y - cameraTargetY) > 0.5) {
+			if (this.camera.position.y < cameraTargetY) {
+				this.camera.position.y += camSpeedY;
+			} else {
+				this.camera.position.y -= camSpeedY;
+			}
+		}
+
+		var camShiftX = (Math.abs(this.camera.position.z) - 10);
+		this.camera.position.x = pos.x + 5 + camShiftX * 0.5;
+		// this.camera.position.y = pos.y - 2 - camShiftX * 0.3;
+
+		// output some debug on SPACE
+		if (input.getKeyDown(input.keyCode.SPACE)) {
+			
+		}
+    };
+
+	fn.prototype.render = function() {
+
+    	this.renderer.render(this.scene, this.camera);
+
+    	// render debug physics output
+    	var pixelToMeter = 30;
+    	
+    	var pos = this.car.carBody.GetPosition();
+    	var offsetx = pos.x * pixelToMeter / 2 - 100;
+    	var offsety = -1 * (pos.y * pixelToMeter / 2 - 250);
+    	this.b2world.DrawDebugData(-offsetx, offsety);
+    };
+
+    fn.prototype.remove = function() {
+
+    };
+
+    return fn;
+	
 });

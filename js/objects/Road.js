@@ -1,15 +1,17 @@
 define([
 	'app/objects/Platform',
 	'app/objects/CurveRoadSection',
+	'random',
 	'noisejs/perlin'
 ], function(
 	Platform,
-	CurveRoadSection
+	CurveRoadSection,
+	random
 ){
-	var fn = function(world) {
-		
-		var levelSeed = 3;
+	var fn = function(world, levelSeed) {
+
 		noise.seed(levelSeed);
+		this.rand = new random(levelSeed);
 
 		var x = 1;
 		var y = 18;
@@ -32,13 +34,20 @@ define([
 		this.update(this.lastNode.x);
 	}
 
+	// TODO: move road generation logic into separate entiry
+	// 		 and leave only track rotation logic here
+	//		 so that we may be able to introduce multiple road generation algorythms
 	fn.prototype.buildFrom = function(prevx, prevy) {
 		// initialize next value from noise generation
 		this.trackIndex++;
-		ydelta = noise.simplex2(this.trackIndex, 0); // 1D noise
 
-		y = 17 + ydelta * 10;
-		x = prevx + 20; //Math.abs(ydelta * 10);
+		var ydelta = noise.simplex2(this.trackIndex, 0); // 1D noise
+		var heighCoeficient = 0.05 * (this.trackIndex < 50 ? 50 : this.trackIndex);
+		heighCoeficient = 1.5;
+
+		y = 17 + ydelta * heighCoeficient ;
+		var xdelta = heighCoeficient * 3.5; 
+		x = prevx + xdelta;
 
 		dx = x - prevx;
 		dy = y - prevy;
@@ -64,6 +73,28 @@ define([
 			this.lastNode.next = curve.startNode;
 			this.lastNode = curve.lastNode;
 		}
+	}
+
+	fn.prototype.remove = function() {
+		// cleanup the road nodes
+		var currNode = this.firstNode;
+		var nextNode = null;
+
+		while (currNode.next) {
+			nextNode = currNode;
+			currNode.remove();
+			currNode = nextNode;
+		}
+
+		currNode = null;
+		nextNode = null;
+		this.firstNode = null;
+		this.lastNode = null;
+
+		// cleanup allocated objects
+		this.cr = null;
+		this.trackIndex = null;
+		this.rand = null;
 	}
 	
 	return fn;
