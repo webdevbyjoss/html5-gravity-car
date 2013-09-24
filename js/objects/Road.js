@@ -11,7 +11,7 @@ define([
 	var fn = function(world, levelSeed) {
 
 		noise.seed(levelSeed);
-		this.rand = new random(levelSeed);
+		// this.rand = new random(levelSeed);
 
 		var x = 1;
 		var y = 18;
@@ -27,9 +27,9 @@ define([
 		this.lastNode = null; // end of linked list
 
 		// generate intial chain
-		var initiCurve = this.buildFrom(x, y);
-		this.firstNode = initiCurve.startNode;
-		this.lastNode = initiCurve.lastNode;
+		var initCurve = this.buildFrom(x, y);
+		this.firstNode = initCurve.startNode;
+		this.lastNode = initCurve.lastNode;
 
 		this.update(this.lastNode.x);
 	}
@@ -43,10 +43,10 @@ define([
 
 		var ydelta = noise.simplex2(this.trackIndex, 0); // 1D noise
 		var heighCoeficient = 0.05 * (this.trackIndex < 50 ? 50 : this.trackIndex);
-		heighCoeficient = 1.5;
+		heighCoeficient = 1.6; //1.5;
 
 		y = 17 + ydelta * heighCoeficient ;
-		var xdelta = heighCoeficient * 3.5; 
+		var xdelta = heighCoeficient * 5; // 3.5; 
 		x = prevx + xdelta;
 
 		dx = x - prevx;
@@ -94,7 +94,7 @@ define([
 		// cleanup allocated objects
 		this.cr = null;
 		this.trackIndex = null;
-		this.rand = null;
+		// this.rand = null;
 	}
 	
 	return fn;

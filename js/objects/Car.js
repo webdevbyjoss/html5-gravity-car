@@ -52,22 +52,23 @@ define(function(){
         this.torqueForce = torqueForce;
         this.stabilizationForce = stabilizationForce;
 
+        this.fixDef = new b2FixtureDef;
+        this.fixDef.density = 1.0;
+        this.fixDef.friction = 0.5;
+        this.fixDef.restitution = 1;
 
-  	    var fixDef = Object.create(this.world.fixDef);
-        fixDef.shape = new b2PolygonShape;
 
-        // define car body
-  	    var bodyDef = new b2BodyDef;
 
-        //create car body
+  	    var fixDef = Object.create(this.fixDef); // = new b2FixtureDef;
         fixDef.density = 0.8;
         fixDef.friction = 0.5;
         fixDef.restitution = 0.01;
         fixDef.filter.groupIndex = -1;
-
         fixDef.shape = new b2PolygonShape();
         fixDef.shape.SetAsBox(data.w*0.5, data.h *0.25);
 
+        // define car body
+        var bodyDef = new b2BodyDef;
         bodyDef.type = b2Body.b2_dynamicBody;
         bodyDef.position.Set(data.posx, data.posy);
         this.carBody = this.world.b2world.CreateBody(bodyDef);
@@ -86,7 +87,7 @@ define(function(){
         this.spring1 = null;
         this.spring2 = null;
 
-        fixDef = Object.create(this.world.fixDef);
+        fixDef = new b2FixtureDef;
         fixDef.density = 1;
         fixDef.friction = 0.5;
         fixDef.restitution = 0.2;
@@ -126,7 +127,7 @@ define(function(){
         this.spring2 = this.world.b2world.CreateJoint(prismaticJointDef);
 
 
-        fixDef = Object.create(this.world.fixDef);
+        fixDef = Object.create(this.fixDef);
         fixDef.density = 0.9;
         fixDef.friction = 6;
         fixDef.restitution = 0.2;

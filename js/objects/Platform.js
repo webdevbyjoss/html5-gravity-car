@@ -15,7 +15,7 @@ define(function(){
 		var dx = x2 - x1;
 		var dy = y2 - y1;
 
-		var mw = Math.sqrt(dx*dx + dy*dy) * 1.05;
+		var mw = Math.sqrt(dx*dx + dy*dy) * 1.02;
 		var angle = Math.atan2(dy, dx);
 
 		this.build({
