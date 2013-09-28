@@ -220,17 +220,21 @@ define(function(){
         // this.spring2.SetMaxMotorForce(force + Math.abs(tension * Math.pow(this.spring2.GetJointTranslation(), 2)));
         // this.spring2.SetMotorSpeed((this.spring2.GetMotorSpeed() - speed * this.spring2.GetJointTranslation()) * 0.4);
 
-        var tension = 100; // spring tension coefficient
-        var force = 80;
-        var speed = 8;
-        var length1 = this.spring1.GetJointTranslation();
-        var length2 = this.spring2.GetJointTranslation();
-
-        this.spring1.SetMaxMotorForce(force);
-        this.spring2.SetMaxMotorForce(force);
+        var tension = 40; // spring tension coefficient
+        var force = 40;
+        var speed = 5;
+        var length1 = this.spring1.GetJointTranslation() + 1;
+        var length2 = this.spring2.GetJointTranslation() + 1;
+        this.spring1.SetMaxMotorForce(force + tension * length1 * length1);
+        this.spring2.SetMaxMotorForce(force + tension * length2 * length2);
+        // var currSpeed2 = this.spring2.GetMotorSpeed();
+        // var currSpeed1 = this.spring1.GetMotorSpeed();
+        // this.spring1.SetMotorSpeed(0.4 * (currSpeed1 - speed * length1));
+        // this.spring2.SetMotorSpeed(0.4 * (currSpeed2 - speed * length2));
 
         this.spring1.SetMotorSpeed(speed);
         this.spring2.SetMotorSpeed(speed);
+
 
         // it will be easier to flip car up side down
         // but almost impossible if it is in correct position
