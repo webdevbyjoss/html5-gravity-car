@@ -2,7 +2,59 @@ define(function(){
     "use strict";
 
     var fn =  function(world, data) {
-        
+        // motor
+        // LEVEL 0
+        // var motorSpeed = 0.3;
+        // var motorTorque = 5;
+
+        // LEVEL 1
+        // var motorSpeed = 1;
+        // var motorTorque = 10;
+
+        // LEVEL 2
+        var motorSpeed = 2;
+        var motorTorque = 50;
+
+        // LEVEL 3
+        //var motorSpeed = 5;
+        //var motorTorque = 30;
+
+        // LEVEL 4
+        //var motorSpeed = 10;
+        //var motorTorque = 50;
+
+
+        // manual stabilization force
+        var torqueForce = 0;
+        var stabilizationForce = 0; // currently commented out
+
+
+
+        var carFixDef = new b2FixtureDef;
+        carFixDef.density = 3;
+        carFixDef.friction = 0.5;
+        carFixDef.restitution = 0.3;
+        carFixDef.filter.groupIndex = -1;
+
+        var axleFixDef = new b2FixtureDef;
+        axleFixDef.density = 5;
+        axleFixDef.friction = 0.5;
+        axleFixDef.restitution = 0;
+
+        var wheelFixDef = new b2FixtureDef;
+        wheelFixDef.density = 0.5;
+        wheelFixDef.friction = 1;
+        wheelFixDef.restitution = 0;
+        wheelFixDef.filter.groupIndex = -1;
+
+
+
+        this.motorSpeed = motorSpeed;
+        this.motorTorque = motorTorque;
+        this.torqueForce = torqueForce;
+        this.stabilizationForce = stabilizationForce;
+
+
         this.world = world;
         this.carBody = null;
         this.glcarBody = null;
@@ -16,127 +68,64 @@ define(function(){
         this.spring2 = null;
         this.glWheel1left = null;
         this.glWheel2left = null;
-
         this._vel = null;
 
-        // motor
-
-        // LEVEL 0
-        // var motorSpeed = 0.3;
-        // var motorTorque = 5;
-
-        // LEVEL 1
-        // var motorSpeed = 1;
-        // var motorTorque = 10;
-
-        // LEVEL 2
-        var motorSpeed = 2;
-        var motorTorque = 20;
-
-        // LEVEL 3
-        //var motorSpeed = 5;
-        //var motorTorque = 30;
-
-        // LEVEL 4
-        //var motorSpeed = 10;
-        //var motorTorque = 50;
-
-
-        // manual stabilization force
-        var torqueForce = 2;
-        var stabilizationForce = 5; // currently commented out
-
-
-        this.motorSpeed = motorSpeed;
-        this.motorTorque = motorTorque;
-        this.torqueForce = torqueForce;
-        this.stabilizationForce = stabilizationForce;
-
-        this.fixDef = new b2FixtureDef;
-        this.fixDef.density = 1.0;
-        this.fixDef.friction = 0.5;
-        this.fixDef.restitution = 1;
 
 
 
-  	    var fixDef = Object.create(this.fixDef); // = new b2FixtureDef;
-        fixDef.density = 0.8;
-        fixDef.friction = 0.5;
-        fixDef.restitution = 0.01;
-        fixDef.filter.groupIndex = -1;
-        fixDef.shape = new b2PolygonShape();
-        fixDef.shape.SetAsBox(data.w*0.5, data.h *0.25);
+        carFixDef.shape = new b2PolygonShape();
+        carFixDef.shape.SetAsBox(data.w*0.5, data.h *0.25);
 
         // define car body
         var bodyDef = new b2BodyDef;
         bodyDef.type = b2Body.b2_dynamicBody;
         bodyDef.position.Set(data.posx, data.posy);
         this.carBody = this.world.b2world.CreateBody(bodyDef);
-        this.carBody.CreateFixture(fixDef);
+        this.carBody.CreateFixture(carFixDef);
 
-        fixDef.shape.SetAsOrientedBox(
+        carFixDef.shape.SetAsOrientedBox(
             data.w * 0.25,
             data.h * 0.25,
             new b2Vec2(-0.25, -0.75), 0
         );
-        this.carBody.CreateFixture(fixDef);
+        this.carBody.CreateFixture(carFixDef);
 
 
         // add the axles
-        var prismaticJointDef;
         this.spring1 = null;
         this.spring2 = null;
 
-        fixDef = new b2FixtureDef;
-        fixDef.density = 1;
-        fixDef.friction = 0.5;
-        fixDef.restitution = 0.2;
+        var axelBodyDef = new b2BodyDef;
+        axelBodyDef.type = b2Body.b2_dynamicBody;
+        axelBodyDef.position.Set(data.posx - 1.8, data.posy + 0.2);
+        this.axle1 = this.world.b2world.CreateBody(axelBodyDef);
+        axelBodyDef.position.Set(data.posx + 1.5, data.posy + 0.2);
+        this.axle2 = this.world.b2world.CreateBody(axelBodyDef);
 
-        bodyDef.position.x = data.posx - 1.8;
-        this.axle1 = this.world.b2world.CreateBody(bodyDef);
+        axleFixDef.shape = new b2PolygonShape();
+        axleFixDef.shape.SetAsBox(0.3, 0.3);
+        this.axle1.CreateFixture(axleFixDef);
+        axleFixDef.shape.SetAsBox(0.3, 0.3);
+        this.axle2.CreateFixture(axleFixDef);
 
-        bodyDef.position.x = data.posx + 1.5;
-        this.axle2 = this.world.b2world.CreateBody(bodyDef);
-
-        fixDef.shape = new b2PolygonShape();
-        
-        fixDef.shape.SetAsBox(0.1, 0.4);
-        this.axle1.CreateFixture(fixDef);
-
-        fixDef.shape.SetAsBox(0.1, 0.4);
-        this.axle2.CreateFixture(fixDef);
 
         // create joins
-        prismaticJointDef = new b2PrismaticJointDef();
-        var axle1Pos = this.axle1.GetWorldCenter();
-        axle1Pos.y += 0.4;
-        prismaticJointDef.Initialize(this.carBody, this.axle1, axle1Pos,
-            new b2Vec2(0, 0.5)
-        );
-        prismaticJointDef.lowerTranslation = -0.2;
-        prismaticJointDef.upperTranslation = 0;
+        var prismaticJointDef = new b2PrismaticJointDef();
+        prismaticJointDef.lowerTranslation = 0;
+        prismaticJointDef.upperTranslation = 0.5;
         prismaticJointDef.enableLimit = true;
         prismaticJointDef.enableMotor = true;
-        this.spring1 = this.world.b2world.CreateJoint(prismaticJointDef);
 
-        var axle2Pos = this.axle2.GetWorldCenter();
-        axle2Pos.y += 0.4;
-        prismaticJointDef.Initialize(this.carBody, this.axle2, axle2Pos,
-            new b2Vec2(0, 0.5)
-        );
+        prismaticJointDef.Initialize(this.carBody, this.axle1, this.axle1.GetWorldCenter(), new b2Vec2(0, 1));
+        this.spring1 = this.world.b2world.CreateJoint(prismaticJointDef);
+        prismaticJointDef.Initialize(this.carBody, this.axle2, this.axle2.GetWorldCenter(), new b2Vec2(0, 1));
         this.spring2 = this.world.b2world.CreateJoint(prismaticJointDef);
 
-
-        fixDef = Object.create(this.fixDef);
-        fixDef.density = 0.9;
-        fixDef.friction = 6;
-        fixDef.restitution = 0.2;
-
         //create wheel1
-        fixDef.shape = new b2CircleShape(data.wheelRadius);
-        bodyDef.position.Set(this.axle1.GetWorldCenter().x, this.axle1.GetWorldCenter().y + 0.3);
+        wheelFixDef.shape = new b2CircleShape(data.wheelRadius);
+        bodyDef.position.Set(this.axle1.GetWorldCenter().x, this.axle1.GetWorldCenter().y);
         this.wheel1 = this.world.b2world.CreateBody(bodyDef);
-        this.wheel1.CreateFixture(fixDef);
+        this.wheel1.CreateFixture(wheelFixDef);
 
         var revoluteJ;
         //create wheel1 joint
@@ -146,9 +135,9 @@ define(function(){
         this.motor1 = this.world.b2world.CreateJoint(revoluteJ);
 
         //create wheel 2
-        bodyDef.position.Set(this.axle2.GetWorldCenter().x, this.axle2.GetWorldCenter().y + 0.3);
+        bodyDef.position.Set(this.axle2.GetWorldCenter().x, this.axle2.GetWorldCenter().y);
         this.wheel2 = this.world.b2world.CreateBody(bodyDef);
-        this.wheel2.CreateFixture(fixDef);
+        this.wheel2.CreateFixture(wheelFixDef);
         //create wheel2 joint
         revoluteJ = new b2RevoluteJointDef();
         revoluteJ.enableMotor = true;
@@ -200,19 +189,19 @@ define(function(){
         this.glWheel1left.position.x = -1.8;
         this.glWheel2left.position.x = 1.4;
 
-        this.glWheel1left.position.y = 0.4;
-        this.glWheel2left.position.y = 0.4;
+        this.glWheel1left.position.y = 0.2;
+        this.glWheel2left.position.y = 0.2;
 
         // attach wheels to the car
         this.glcarBody.add(this.glWheel1left);
         this.glcarBody.add(this.glWheel2left);
 
         world.scene.add( this.glcarBody );
-    }
+    };
 
     fn.prototype.update = function(input) {
 
-        this.motorSpeed = 5 + (this.getSpeedPow2() * 0.7);
+        this.motorSpeed = 5 + (this.getSpeedPow2() * 0.5);
 
         // accelerate car            
         this.motor1.SetMotorSpeed(
@@ -221,18 +210,31 @@ define(function(){
         this.motor1.SetMaxMotorTorque(
             input.getKey(input.keyCode.A) || input.getKey(input.keyCode.D) ? this.motorTorque : 0.5);
 
-        var tension = 800;
-        var force = 30;
-        var speed = 10;
 
-        this.spring1.SetMaxMotorForce(force + Math.abs(tension * Math.pow(this.spring1.GetJointTranslation(), 2)));
-        this.spring1.SetMotorSpeed((this.spring1.GetMotorSpeed() - speed * this.spring1.GetJointTranslation()) * 0.4);
-        this.spring2.SetMaxMotorForce(force + Math.abs(tension * Math.pow(this.spring2.GetJointTranslation(), 2)));
-        this.spring2.SetMotorSpeed((this.spring2.GetMotorSpeed() - speed * this.spring2.GetJointTranslation()) * 0.4);
+        // Simulate realistic spring
+        // where in simplified model feedback force determined by multiplication
+        // of spring tension by square spring length
 
+        // this.spring1.SetMaxMotorForce(force + Math.abs(tension * Math.pow(this.spring1.GetJointTranslation(), 2)));
+        // this.spring1.SetMotorSpeed((this.spring1.GetMotorSpeed() - speed * this.spring1.GetJointTranslation()) * 0.4);
+        // this.spring2.SetMaxMotorForce(force + Math.abs(tension * Math.pow(this.spring2.GetJointTranslation(), 2)));
+        // this.spring2.SetMotorSpeed((this.spring2.GetMotorSpeed() - speed * this.spring2.GetJointTranslation()) * 0.4);
+
+        var tension = 100; // spring tension coefficient
+        var force = 80;
+        var speed = 8;
+        var length1 = this.spring1.GetJointTranslation();
+        var length2 = this.spring2.GetJointTranslation();
+
+        this.spring1.SetMaxMotorForce(force);
+        this.spring2.SetMaxMotorForce(force);
+
+        this.spring1.SetMotorSpeed(speed);
+        this.spring2.SetMotorSpeed(speed);
 
         // it will be easier to flip car up side down
         // but almost impossible if it is in correct position
+        /*
         var carAngle = this.normalizeAngle(this.carBody.GetAngle());
         var carTorquoRatio = Math.sin(carAngle * 0.5); // strongest when car is up-side-down
         if (input.getKey(input.keyCode.A)) {
@@ -250,6 +252,7 @@ define(function(){
             this.carBody.SetAngularVelocity(0);
             this.carBody.ApplyTorque(-1 * (this.torqueForce) * 200);
         }
+        */
         
         // car stabilization, lets apply the torque force into opposit direction
         // depending on current car position relative from ground
@@ -275,20 +278,20 @@ define(function(){
         var wheel1Y = this.spring1.GetJointTranslation();
         var wheel2Y = this.spring2.GetJointTranslation();
 
-        this.glWheel1left.position.y = wheel1Y * 1.7 + 0.65;
-        this.glWheel2left.position.y = wheel2Y * 1.7 + 0.65;
-    }
+        this.glWheel1left.position.y = wheel1Y + 0.2;
+        this.glWheel2left.position.y = wheel2Y + 0.2;
+    };
 
     fn.prototype.getSpeedPow2 = function() {
         this._vel = this.carBody.GetLinearVelocity();
         return Math.sqrt(this._vel.x * this._vel.x + this._vel.y * this._vel.y);
-    }
+    };
 
     fn.prototype.normalizeAngle = function(angle) {
       angle = angle % (2 * Math.PI); 
       return angle >= 0 ? angle : angle + 2 * Math.PI;
       // angle = atan2(sin(angle, cos(angle))
-    }
+    };
 
     fn.prototype.remove = function() {
         // remove phisics elements
@@ -323,8 +326,8 @@ define(function(){
         this.glcarBody = null;
 
         this._vel = null;
-    }
+    };
 
     return fn;
 
-})
+});

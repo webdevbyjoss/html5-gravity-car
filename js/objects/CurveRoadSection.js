@@ -5,7 +5,7 @@ define([
 ){
 	var fn = function(world) {
 		this.world = world;
-	}
+	};
 
 	/**
 	 * Builds curve road section
@@ -44,7 +44,7 @@ define([
 		// we will be moving
 		/*if (h < 0) {*/
 			// from 0 to Pi when building segment from up to down
-		a1 = 0
+		a1 = 0;
 		a2 = Math.PI;
 		/*}/* else {
 			// from Pi to 2*Pi when building segment from down to up
@@ -83,7 +83,7 @@ define([
 			} else {
 				prevNode.next = currentNode;
 			}
-		};
+		}
 
 		return {
 			'lastNode': currentNode,
@@ -91,11 +91,6 @@ define([
 		};
 	};
 
-	// create oriented platform
-	fn.prototype.buildChain = function() {
-
-	}
-	
 	return fn;
 
 });

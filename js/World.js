@@ -25,14 +25,14 @@ define([
 	    // create car
 	    this.car = new Car(this, {
             posx: 30,
-            posy: 10,
+            posy: 16,
 			w: 5,
             h: 1.7,
             wheelRadius: 0.6
         });
 
 		this.road = new Road(this, 5);
-	}
+	};
 
 	fn.prototype.update = function(input) {
 

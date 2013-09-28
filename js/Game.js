@@ -12,7 +12,7 @@ define([
 		this.initBox2D();
 
 		this.new();
-	}
+	};
 
 	fn.prototype.new = function() {
 
@@ -21,12 +21,12 @@ define([
 		}
 
 		this.world = new World(this.scene, this.camera, this.b2world);
-	}
+	};
 
 	fn.prototype.over = function() {
 		this.world.remove();
 		this.world = null;
-	}
+	};
 
 	fn.prototype.update = function(input) {
 
@@ -42,13 +42,13 @@ define([
             ,  10       //position iterations
         );
         this.b2world.ClearForces();
-	}
+	};
 
 	fn.prototype.render = function() {
 		this.world.render();
 
 		this.renderer.render(this.scene, this.camera);
-	}
+	};
 
 	fn.prototype.initBox2D = function() {
 
@@ -67,7 +67,7 @@ define([
 	        debugDraw.SetFlags(b2DebugDraw.e_shapeBit | b2DebugDraw.e_jointBit);
 	        this.b2world.SetDebugDraw(debugDraw);
 
-	}
+	};
 
 	fn.prototype.initGL = function(elCanvas) {
 	    this.scene = new THREE.Scene();
@@ -111,7 +111,7 @@ define([
 		light.castShadow = true;
 		light.shadowCameraVisible = true;
 		this.scene.add(light);
-	}
+	};
 
 	return fn;
 });

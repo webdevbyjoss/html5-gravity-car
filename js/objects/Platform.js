@@ -23,7 +23,7 @@ define(function(){
 			'box': {'w': mw, 'h': 0.5},
 			'angle': angle
 		});
-	}
+	};
 
 	fn.prototype.build = function(data) {
 
@@ -33,7 +33,7 @@ define(function(){
 	    this.fixDef.shape.SetAsBox(data.box.w * 0.5, data.box.h * 0.5);
 	   	this.fixDef.density = 1;
 	    this.fixDef.friction = 1;
-	    this.fixDef.restitution = 0;
+	    this.fixDef.restitution = 0.1;
 
 
 		// build physical body according to data
@@ -63,11 +63,11 @@ define(function(){
 		this.cube.position.y = bodyDef2.position.y;
 		this.cube.position.z = -0.2;
 		this.cube.rotation.z = bodyDef2.angle;		
-	}
+	};
 
 	fn.prototype.update = function() {
 		// do nothing for now as platforms are completely unmovable
-	}
+	};
 
 	fn.prototype.remove = function() {
 		this.world.b2world.DestroyBody(this.obj);
@@ -79,7 +79,7 @@ define(function(){
 		this.fixture = null;
 		this.cube = null;
 		this.next = null;
-	}
+	};
 
 	return fn;
-})
+});

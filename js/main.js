@@ -7,7 +7,7 @@ requirejs.config({
     //never includes a ".js" extension since
     //the paths config could be for a directory.
     paths: {
-        app: '..',
+        app: '..'
     }
 });
 
@@ -33,7 +33,7 @@ window.cancelRequestAnimFrame = (function () {
 // Input component
 (function () {
 
-    input = {};
+    var input = {};
 
     // Lets add some predefined key codes
     input.keyCode = {
@@ -57,7 +57,7 @@ window.cancelRequestAnimFrame = (function () {
         // action key for AWSD controls
         J: 74,
         K: 75,
-        L: 76,
+        L: 76
     };
 
     // Keys Configuration

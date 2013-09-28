@@ -32,7 +32,7 @@ define([
 		this.lastNode = initCurve.lastNode;
 
 		this.update(this.lastNode.x);
-	}
+	};
 
 	// TODO: move road generation logic into separate entiry
 	// 		 and leave only track rotation logic here
@@ -45,15 +45,15 @@ define([
 		var heighCoeficient = 0.05 * (this.trackIndex < 50 ? 50 : this.trackIndex);
 		heighCoeficient = 1.6; //1.5;
 
-		y = 17 + ydelta * heighCoeficient ;
+		var y = 17 + ydelta * heighCoeficient ;
 		var xdelta = heighCoeficient * 5; // 3.5; 
-		x = prevx + xdelta;
+		var x = prevx + xdelta;
 
-		dx = x - prevx;
-		dy = y - prevy;
+		var dx = x - prevx;
+		var dy = y - prevy;
 
 		return this.cr.buildCurve(prevx, prevy, dx, dy);
-	}
+	};
 
 	fn.prototype.update = function(offsetX) {
 		// remove extra nodes from the end
@@ -73,7 +73,7 @@ define([
 			this.lastNode.next = curve.startNode;
 			this.lastNode = curve.lastNode;
 		}
-	}
+	};
 
 	fn.prototype.remove = function() {
 		// cleanup the road nodes
@@ -95,7 +95,7 @@ define([
 		this.cr = null;
 		this.trackIndex = null;
 		// this.rand = null;
-	}
+	};
 	
 	return fn;
 
