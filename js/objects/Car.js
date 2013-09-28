@@ -25,7 +25,7 @@ define(function(){
 
 
         // manual stabilization force
-        var torqueForce = 0;
+        var torqueForce = 50;
         var stabilizationForce = 0; // currently commented out
 
 
@@ -33,18 +33,19 @@ define(function(){
         var carFixDef = new b2FixtureDef;
         carFixDef.density = 3;
         carFixDef.friction = 0.5;
-        carFixDef.restitution = 0.3;
+        carFixDef.restitution = 0.1;
         carFixDef.filter.groupIndex = -1;
 
         var axleFixDef = new b2FixtureDef;
-        axleFixDef.density = 5;
-        axleFixDef.friction = 0.5;
+        axleFixDef.density = 3;
+        axleFixDef.friction = 1;
         axleFixDef.restitution = 0;
+        carFixDef.filter.groupIndex = -1;
 
         var wheelFixDef = new b2FixtureDef;
-        wheelFixDef.density = 0.5;
-        wheelFixDef.friction = 1;
-        wheelFixDef.restitution = 0;
+        wheelFixDef.density = 1;
+        wheelFixDef.friction = 10;
+        wheelFixDef.restitution = 0.7;
         wheelFixDef.filter.groupIndex = -1;
 
 
@@ -97,9 +98,9 @@ define(function(){
 
         var axelBodyDef = new b2BodyDef;
         axelBodyDef.type = b2Body.b2_dynamicBody;
-        axelBodyDef.position.Set(data.posx - 1.8, data.posy + 0.2);
+        axelBodyDef.position.Set(data.posx - 1.8, data.posy + 0.5);
         this.axle1 = this.world.b2world.CreateBody(axelBodyDef);
-        axelBodyDef.position.Set(data.posx + 1.5, data.posy + 0.2);
+        axelBodyDef.position.Set(data.posx + 1.5, data.posy + 0.5);
         this.axle2 = this.world.b2world.CreateBody(axelBodyDef);
 
         axleFixDef.shape = new b2PolygonShape();
@@ -111,8 +112,8 @@ define(function(){
 
         // create joins
         var prismaticJointDef = new b2PrismaticJointDef();
-        prismaticJointDef.lowerTranslation = 0;
-        prismaticJointDef.upperTranslation = 0.5;
+        prismaticJointDef.lowerTranslation = -0.3;
+        prismaticJointDef.upperTranslation = 0.3;
         prismaticJointDef.enableLimit = true;
         prismaticJointDef.enableMotor = true;
 
@@ -154,7 +155,7 @@ define(function(){
         var material = new THREE.MeshLambertMaterial( { color: 0x248F24 } );
         
         var geometryBody = new THREE.CubeGeometry(data.w * 1.05, data.h * 0.6, 0);
-        var geometryTop = new THREE.CubeGeometry(data.w * 0.55, data.h * 0.5, 0);
+        var geometryTop = new THREE.CubeGeometry(data.w * 0.55, data.h * 0.55, 0);
 
         this.glcarBody = new THREE.Mesh( geometryBody, material );
         this.glcarBody.castShadow = true;
@@ -214,33 +215,23 @@ define(function(){
         // Simulate realistic spring
         // where in simplified model feedback force determined by multiplication
         // of spring tension by square spring length
-
-        // this.spring1.SetMaxMotorForce(force + Math.abs(tension * Math.pow(this.spring1.GetJointTranslation(), 2)));
-        // this.spring1.SetMotorSpeed((this.spring1.GetMotorSpeed() - speed * this.spring1.GetJointTranslation()) * 0.4);
-        // this.spring2.SetMaxMotorForce(force + Math.abs(tension * Math.pow(this.spring2.GetJointTranslation(), 2)));
-        // this.spring2.SetMotorSpeed((this.spring2.GetMotorSpeed() - speed * this.spring2.GetJointTranslation()) * 0.4);
-
-        var tension = 40; // spring tension coefficient
-        var force = 40;
-        var speed = 5;
-        var length1 = this.spring1.GetJointTranslation() + 1;
-        var length2 = this.spring2.GetJointTranslation() + 1;
+        var tension = 600; // spring tension coefficient
+        var force = 120;
+        var speed = 10;
+        var length1 = this.spring1.GetJointTranslation();
+        var length2 = this.spring2.GetJointTranslation();
         this.spring1.SetMaxMotorForce(force + tension * length1 * length1);
-        this.spring2.SetMaxMotorForce(force + tension * length2 * length2);
-        // var currSpeed2 = this.spring2.GetMotorSpeed();
-        // var currSpeed1 = this.spring1.GetMotorSpeed();
-        // this.spring1.SetMotorSpeed(0.4 * (currSpeed1 - speed * length1));
-        // this.spring2.SetMotorSpeed(0.4 * (currSpeed2 - speed * length2));
+        this.spring2.SetMaxMotorForce(force + tension * length2 * length1);
+        var currSpeed1 = this.spring1.GetMotorSpeed();
+        var currSpeed2 = this.spring2.GetMotorSpeed();
+        var newSpeed1 = 0.4 * (currSpeed1 - speed * length1);
+        var newSpeed2 = 0.4 * (currSpeed2 - speed * length2);
+        this.spring1.SetMotorSpeed(newSpeed1);
+        this.spring2.SetMotorSpeed(newSpeed2);
 
-        this.spring1.SetMotorSpeed(speed);
-        this.spring2.SetMotorSpeed(speed);
 
-
-        // it will be easier to flip car up side down
-        // but almost impossible if it is in correct position
-        /*
+        // add ability to control car position in air
         var carAngle = this.normalizeAngle(this.carBody.GetAngle());
-        var carTorquoRatio = Math.sin(carAngle * 0.5); // strongest when car is up-side-down
         if (input.getKey(input.keyCode.A)) {
             this.carBody.ApplyTorque(this.torqueForce);
         }
@@ -250,14 +241,13 @@ define(function(){
         
         if (input.getKeyDown(input.keyCode.A)) {
             this.carBody.SetAngularVelocity(0);
-            this.carBody.ApplyTorque(this.torqueForce * 200);
+            this.carBody.ApplyTorque(this.torqueForce * 10);
         }
         if (input.getKeyDown(input.keyCode.D)) {
             this.carBody.SetAngularVelocity(0);
-            this.carBody.ApplyTorque(-1 * (this.torqueForce) * 200);
+            this.carBody.ApplyTorque(-1 * (this.torqueForce) * 10);
         }
-        */
-        
+
         // car stabilization, lets apply the torque force into opposit direction
         // depending on current car position relative from ground
         // var carTorquoStabilizationRatio = Math.sin(carAngle); // strongest in vertical position
@@ -282,8 +272,8 @@ define(function(){
         var wheel1Y = this.spring1.GetJointTranslation();
         var wheel2Y = this.spring2.GetJointTranslation();
 
-        this.glWheel1left.position.y = wheel1Y + 0.2;
-        this.glWheel2left.position.y = wheel2Y + 0.2;
+        this.glWheel1left.position.y = wheel1Y + 0.5;
+        this.glWheel2left.position.y = wheel2Y + 0.5;
     };
 
     fn.prototype.getSpeedPow2 = function() {

@@ -33,7 +33,7 @@ define(function(){
 	    this.fixDef.shape.SetAsBox(data.box.w * 0.5, data.box.h * 0.5);
 	   	this.fixDef.density = 1;
 	    this.fixDef.friction = 1;
-	    this.fixDef.restitution = 0.1;
+	    this.fixDef.restitution = 0;
 
 
 		// build physical body according to data
