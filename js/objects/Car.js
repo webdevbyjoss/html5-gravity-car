@@ -100,7 +100,7 @@ define(function(){
         axelBodyDef.type = b2Body.b2_dynamicBody;
         axelBodyDef.position.Set(data.posx - 1.8, data.posy + 0.5);
         this.axle1 = this.world.b2world.CreateBody(axelBodyDef);
-        axelBodyDef.position.Set(data.posx + 1.5, data.posy + 0.5);
+        axelBodyDef.position.Set(data.posx + 1.6, data.posy + 0.5);
         this.axle2 = this.world.b2world.CreateBody(axelBodyDef);
 
         axleFixDef.shape = new b2PolygonShape();
@@ -113,7 +113,7 @@ define(function(){
         // create joins
         var prismaticJointDef = new b2PrismaticJointDef();
         prismaticJointDef.lowerTranslation = -0.3;
-        prismaticJointDef.upperTranslation = 0.3;
+        prismaticJointDef.upperTranslation = 0.4;
         prismaticJointDef.enableLimit = true;
         prismaticJointDef.enableMotor = true;
 
@@ -188,7 +188,7 @@ define(function(){
 
 
         this.glWheel1left.position.x = -1.8;
-        this.glWheel2left.position.x = 1.4;
+        this.glWheel2left.position.x = 1.6;
 
         this.glWheel1left.position.y = 0.2;
         this.glWheel2left.position.y = 0.2;
@@ -215,9 +215,9 @@ define(function(){
         // Simulate realistic spring
         // where in simplified model feedback force determined by multiplication
         // of spring tension by square spring length
-        var tension = 600; // spring tension coefficient
-        var force = 120;
-        var speed = 10;
+        var tension = 200; // spring tension coefficient
+        var force = 100;
+        var speed = 40;
         var length1 = this.spring1.GetJointTranslation();
         var length2 = this.spring2.GetJointTranslation();
         this.spring1.SetMaxMotorForce(force + tension * length1 * length1);

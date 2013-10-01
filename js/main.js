@@ -11,6 +11,13 @@ requirejs.config({
     }
 });
 
+// adjust screen size to monitor resolution and 16:9 aspect ratio
+var elem = document.getElementById('main');
+var width = elem.parentNode.clientWidth - 15;
+elem.width = width;
+elem.height = width / 1.77; // 16:9 aspect ratio
+
+
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
             window.webkitRequestAnimationFrame ||
@@ -143,7 +150,7 @@ function avg(a, b) {
 }
 
 // Start the main app logic.
-requirejs(['app/Game'], function(Game) {
+requirejs(['app/Game', 'underscore-min'], function(Game) {
     
     var game = new Game();
 

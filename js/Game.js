@@ -1,6 +1,7 @@
 define([
-	'app/World'
-], function(World){
+	'app/World',
+    'app/objects/ui/PlayerStatus'
+], function(World, PlayerStatus){
 	"use strict";
 
 	var fn = function() {
@@ -12,6 +13,13 @@ define([
 		this.initBox2D();
 
 		this.new();
+
+        this.uiStatus = new PlayerStatus(this.scene, this.camera);
+        this.uiStatusTimer = 0;
+        this.uiStatusUpdateInterval = 30;
+
+        this.gameMax = 0;
+        this.playerMax = 0;
 	};
 
 	fn.prototype.new = function() {
@@ -24,17 +32,37 @@ define([
 	};
 
 	fn.prototype.over = function() {
+        this.gameMax = 0;
 		this.world.remove();
 		this.world = null;
 	};
 
 	fn.prototype.update = function(input) {
 
+        // restart game on ENTER
 		if (input.getKeyDown(input.keyCode.ENTER)) {
 			this.new();
 		}
 
 		this.world.update(input);
+
+        // update UI
+        /*
+        this.uiStatusTimer++;
+        if (this.uiStatusTimer > this.uiStatusUpdateInterval) {
+            var current = ~~this.camera.position.x - 35;
+            // update game distance
+            if (this.gameMax < current) {
+                this.gameMax = current;
+                if (this.playerMax < this.gameMax) {
+                    this.playerMax = this.gameMax;
+                }
+            }
+
+            this.uiStatusTimer = 0; // reset timer
+            this.uiStatus.update(this.gameMax, this.playerMax);
+        }
+        */
 
     	this.b2world.Step(
                1 / 35   //frame-rate
@@ -73,7 +101,8 @@ define([
 	    this.scene = new THREE.Scene();
 	    this.camera = new THREE.PerspectiveCamera( 55, elCanvas.width / elCanvas.height, 0.1, 1000 );
 	    this.renderer = new THREE.WebGLRenderer({
-	    	canvas: elCanvas
+	    	canvas: elCanvas,
+            antialias: true
 	    });
 
 	    // this.renderer.shadowMapEnabled = true;
@@ -90,10 +119,14 @@ define([
 
 
 		this.camera.position.x = 30;
-		this.camera.position.y = 17;
-		this.camera.position.z = -15;
+		this.camera.position.y = 15;
+		this.camera.position.z = -11;
 		this.camera.rotation.z = Math.PI;
 		this.camera.rotation.y = Math.PI;
+
+        // camera contains child objects
+        // so should be added to scene
+        this.scene.add(this.camera);
 
 		// add subtle blue ambient lighting
 		/*
@@ -106,11 +139,18 @@ define([
 		this.scene.add(directionalLight);
 
 		// directional lighting
+        /*
 		var light = new THREE.SpotLight(0xFFFFFF);
 		light.position.set(70, 150, -20);
 		light.castShadow = true;
 		light.shadowCameraVisible = true;
 		this.scene.add(light);
+		*/
+        var origin = new THREE.Vector3(30, 14, 0);
+        var terminus  = new THREE.Vector3(35, 14, 0);
+        var direction = new THREE.Vector3().subVectors(terminus, origin).normalize();
+        var arrow = new THREE.ArrowHelper(direction, origin, 5, 0x884400);
+        this.scene.add(arrow);
 	};
 
 	return fn;
