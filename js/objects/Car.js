@@ -124,67 +124,164 @@ define(function(){
         this.motor2 = this.world.b2world.CreateJoint(revoluteJ);
 
 
-
-        // create visual opengl representation of the car
-        // build visual representation of car body
-        var material = new THREE.MeshLambertMaterial( { color: 0x248F24 } );
+        // create visual opengl representation of the car aligned with physics
+        var mainColor = 0x2C5F9B; // Deeper blue for the main body
+        var darkColor = 0x1A3A5E; // Darker blue for details
+        var windowColor = 0xA3C8E3; // Light blue for windows
+        var headlightColor = 0xFFFFA0; // Yellow for headlights
+        var taillightColor = 0xFF0000; // Red for taillights
+        var wheelColor = 0x222222; // Dark gray for wheels
+        var rimColor = 0xCCCCCC; // Light gray for wheel rims
         
-        var geometryBody = new THREE.CubeGeometry(data.w, data.h * 0.5, 1);
-        var geometryTop = new THREE.CubeGeometry(data.w * 0.5, data.h * 0.5, 1);
-
-        var glcarBody = new THREE.Mesh( geometryBody, material );
-        var glcarTop = new THREE.Mesh( geometryTop, material );
-
-        glcarTop.position.y = -0.8;
-        glcarTop.position.x = -0.4;
-        glcarBody.add(glcarTop);
-
-        // create wheels
-        var wheelgeometry = new THREE.CylinderGeometry(
-            data.wheelRadius,
-            data.wheelRadius,
-            0.25,
-            8,
-            1,
-            false
-        );
-        var wheelMaterial = new THREE.MeshLambertMaterial( { color: 0x62625E } );
-
-        var glWheel1left = new THREE.Mesh( wheelgeometry, wheelMaterial );
-        var glWheel2left = new THREE.Mesh( wheelgeometry, wheelMaterial );
-
-        var glWheel1right = new THREE.Mesh( wheelgeometry, wheelMaterial );
-        var glWheel2right = new THREE.Mesh( wheelgeometry, wheelMaterial );
-
-        glWheel1left.rotation.x = Math.PI/2;
-        glWheel2left.rotation.x = Math.PI/2;
-        glWheel1right.rotation.x = Math.PI/2;
-        glWheel2right.rotation.x = Math.PI/2;
-
-        glWheel1left.position.z = -1;
-        glWheel2left.position.z = -1;
-        glWheel1right.position.z = 1;
-        glWheel2right.position.z = 1;
-
-        glWheel1left.position.x = -1.5;
-        glWheel1right.position.x = -1.5;
-
-        glWheel2left.position.x = 1.3;
-        glWheel2right.position.x = 1.3;
-
-        glWheel1left.position.y = 0.4;
-        glWheel2left.position.y = 0.4;
-        glWheel1right.position.y = 0.4;
-        glWheel2right.position.y = 0.4;
-
+        // Create a car group to hold all parts
+        var glcarBody = new THREE.Object3D();
+        
+        // Materials
+        var bodyMaterial = new THREE.MeshLambertMaterial({ color: mainColor });
+        var darkMaterial = new THREE.MeshLambertMaterial({ color: darkColor });
+        var windowMaterial = new THREE.MeshLambertMaterial({ color: windowColor });
+        var headlightMaterial = new THREE.MeshLambertMaterial({ color: headlightColor });
+        var taillightMaterial = new THREE.MeshLambertMaterial({ color: taillightColor });
+        
+        // Create a unified car body instead of separate pieces
+        // Main body part (horizontal) - increased height by 30%
+        var mainBodyGeometry = new THREE.CubeGeometry(data.w, data.h * 0.65, 2.0); // Increased from 0.5 to 0.65
+        var mainBody = new THREE.Mesh(mainBodyGeometry, bodyMaterial);
+        mainBody.position.y = -0.075; // Slight adjustment to position to accommodate increased height
+        glcarBody.add(mainBody);
+        
+        // Connecting piece to smooth the transition between parts
+        var connectorGeometry = new THREE.CubeGeometry(data.w * 0.6, data.h * 0.3, 2.0);
+        var connector = new THREE.Mesh(connectorGeometry, bodyMaterial);
+        connector.position.x = -0.2;
+        connector.position.y = -0.55; // Adjusted to match the new main body height
+        glcarBody.add(connector);
+        
+        // Second body part (cabin/cockpit)
+        var secondBodyGeometry = new THREE.CubeGeometry(data.w * 0.5, data.h * 0.5, 2.0);
+        var secondBody = new THREE.Mesh(secondBodyGeometry, bodyMaterial);
+        secondBody.position.x = -0.25;
+        secondBody.position.y = -1.0;
+        glcarBody.add(secondBody);
+        
+        // Add simple windshield that spans the transition at 45 degrees
+        var windshieldGeometry = new THREE.CubeGeometry(0.05, data.h * 0.9, 1.8);
+        var windshield = new THREE.Mesh(windshieldGeometry, windowMaterial);
+        windshield.position.x = data.w * 0.1;
+        windshield.position.y = -0.6;
+        windshield.rotation.z = Math.PI * 0.25; // 45 degree angle
+        glcarBody.add(windshield);
+        
+        // Add simple rear window
+        var rearWindowGeometry = new THREE.CubeGeometry(0.05, data.h * 0.5, 1.8);
+        var rearWindow = new THREE.Mesh(rearWindowGeometry, windowMaterial);
+        rearWindow.position.x = -data.w * 0.35;
+        rearWindow.position.y = -0.8;
+        rearWindow.rotation.z = -Math.PI * 0.1;
+        glcarBody.add(rearWindow);
+        
+        // Add simple headlights
+        var headlightGeometry = new THREE.CylinderGeometry(0.12, 0.12, 0.1, 8);
+        
+        var headlightLeft = new THREE.Mesh(headlightGeometry, headlightMaterial);
+        headlightLeft.rotation.z = Math.PI * 0.5;
+        headlightLeft.position.x = data.w * 0.45;
+        headlightLeft.position.y = -0.1;
+        headlightLeft.position.z = 0.7;
+        glcarBody.add(headlightLeft);
+        
+        var headlightRight = headlightLeft.clone();
+        headlightRight.position.z = -0.7;
+        glcarBody.add(headlightRight);
+        
+        // Add simple taillights
+        var taillightGeometry = new THREE.CubeGeometry(0.1, 0.15, 0.3);
+        
+        var taillightLeft = new THREE.Mesh(taillightGeometry, taillightMaterial);
+        taillightLeft.position.x = -data.w * 0.45;
+        taillightLeft.position.y = -0.1;
+        taillightLeft.position.z = 0.7;
+        glcarBody.add(taillightLeft);
+        
+        var taillightRight = taillightLeft.clone();
+        taillightRight.position.z = -0.7;
+        glcarBody.add(taillightRight);
+        
+        // Create wheels (simplified)
+        var wheelTireMaterial = new THREE.MeshLambertMaterial({ color: wheelColor });
+        var wheelRimMaterial = new THREE.MeshLambertMaterial({ color: rimColor });
+        
+        // Simple wheel creation function
+        var createWheel = function(x, y, z) {
+            var wheelGroup = new THREE.Object3D();
+            
+            // Tire - simple cylinder
+            var wheelTire = new THREE.Mesh(
+                new THREE.CylinderGeometry(data.wheelRadius, data.wheelRadius, 0.5, 24, 1, false),
+                wheelTireMaterial
+            );
+            wheelTire.rotation.x = Math.PI/2;
+            wheelGroup.add(wheelTire);
+            
+            // Rim
+            var wheelRim = new THREE.Mesh(
+                new THREE.CylinderGeometry(data.wheelRadius * 0.65, data.wheelRadius * 0.65, 0.51, 16, 1, false),
+                wheelRimMaterial
+            );
+            wheelRim.rotation.x = Math.PI/2;
+            wheelGroup.add(wheelRim);
+            
+            // Hub cap in the center
+            var hubCap = new THREE.Mesh(
+                new THREE.CylinderGeometry(data.wheelRadius * 0.2, data.wheelRadius * 0.2, 0.52, 16, 1, false),
+                wheelRimMaterial
+            );
+            hubCap.rotation.x = Math.PI/2;
+            wheelGroup.add(hubCap);
+            
+            // Add visible spokes to show rotation
+            for (var i = 0; i < 6; i++) {
+                var spoke = new THREE.Mesh(
+                    new THREE.CubeGeometry(data.wheelRadius * 1.1, 0.1, 0.07),
+                    wheelRimMaterial
+                );
+                spoke.rotation.z = Math.PI * i / 3; // Divide 360 degrees into 6 equal parts
+                spoke.position.y = 0;
+                wheelRim.add(spoke);
+            }
+            
+            // Add colored markers on the tire edge
+            var markerMaterial = new THREE.MeshLambertMaterial({ color: 0xFFFFFF }); // White markers
+            
+            var marker = new THREE.Mesh(
+                new THREE.CubeGeometry(0.1, 0.1, 0.55),
+                markerMaterial
+            );
+            marker.position.set(data.wheelRadius * 0.8, 0, 0);
+            wheelTire.add(marker);
+            
+            // Add a second marker on the opposite side for balance
+            var marker2 = marker.clone();
+            marker2.position.set(-data.wheelRadius * 0.8, 0, 0);
+            wheelTire.add(marker2);
+            
+            wheelGroup.position.set(x, y, z);
+            return wheelGroup;
+        };
+        
+        // Create the four wheels
+        var glWheel1left = createWheel(-1.5, 0.4, -1.1);
+        var glWheel2left = createWheel(1.3, 0.4, -1.1);
+        var glWheel1right = createWheel(-1.5, 0.4, 1.1);
+        var glWheel2right = createWheel(1.3, 0.4, 1.1);
+        
         // attach wheels to the car
         glcarBody.add(glWheel1left);
         glcarBody.add(glWheel2left);
         glcarBody.add(glWheel1right);
         glcarBody.add(glWheel2right);
 
-
-        world.scene.add( glcarBody );
+        world.scene.add(glcarBody);
 
         this.update = function(input) {
 
@@ -242,10 +339,10 @@ define(function(){
 
             var wheel1Def = this.wheel1.GetDefinition();
             var wheel2Def = this.wheel2.GetDefinition();
-            glWheel1left.rotation.y = wheel1Def.angle;
-            glWheel2left.rotation.y = wheel2Def.angle;
-            glWheel1right.rotation.y = wheel1Def.angle;
-            glWheel2right.rotation.y = wheel2Def.angle;
+            glWheel1left.rotation.z = wheel1Def.angle;
+            glWheel2left.rotation.z = wheel2Def.angle;
+            glWheel1right.rotation.z = wheel1Def.angle;
+            glWheel2right.rotation.z = wheel2Def.angle;
 
             var wheel1Y = this.spring1.GetJointTranslation();
             var wheel2Y = this.spring2.GetJointTranslation();
