@@ -103,6 +103,13 @@ define([
 
 	    	this.car.update(input);
 
+	    	// Update garbage objects if any exist
+			if (this.garbageObjects && this.garbageObjects.length > 0) {
+				for (var i = 0; i < this.garbageObjects.length; i++) {
+					this.garbageObjects[i].update();
+				}
+			}
+
 	    	// update camera position according to car body
 	    	var pos = this.car.carBody.GetPosition();
 			

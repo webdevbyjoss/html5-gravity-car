@@ -82,8 +82,10 @@ define([
 					'angle': angle
 				});
 
-				// Occasionally add obstacles based on the random seed
-				if (rand.next() < 0.03 && i > 100) { // Avoid obstacles in the starting area
+				// Add obstacles (garbage) at regular intervals with some randomness
+				if ((i % 30 === 0 && rand.next() < 0.7 && i > 100) || // Regular obstacles every ~90 units
+				    (rand.next() < 0.01 && i > 100)) {               // Plus some random ones
+					// Position the garbage on top of the road
 					dropGarbage(x, y - 2);
 				}
 			}
