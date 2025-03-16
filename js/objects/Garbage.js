@@ -5,21 +5,21 @@ define(function(){
 	    var fixDef = Object.create(this.world.fixDef);
 	    var bodyDef = new b2BodyDef;
 	    bodyDef.type = b2Body.b2_dynamicBody;
-	    fixDef.density = 0.01;
+	    fixDef.density = 0.005;
 	    fixDef.friction = 0.2;
-	    fixDef.restitution = 0.5;
+	    fixDef.restitution = 0.8;
 
 		var isCircle = Math.random() > 0.3;
 		var sizeX, sizeY, radius;
 		
-	    // spawn either poly or circle
+	    // spawn either poly or circle with smaller sizes
         if(!isCircle) {
            fixDef.shape = new b2PolygonShape;
-		   sizeX = Math.random() + 0.5; // half width
-		   sizeY = Math.random() + 0.5; // half height
+		   sizeX = Math.random() * 0.6 + 0.3; // half width (was Math.random() + 0.5)
+		   sizeY = Math.random() * 0.6 + 0.3; // half height (was Math.random() + 0.5)
            fixDef.shape.SetAsBox(sizeX, sizeY);
         } else {
-		   radius = Math.random() + 1; // radius
+		   radius = Math.random() * 0.6 + 0.6; // radius (was Math.random() + 1)
            fixDef.shape = new b2CircleShape(radius);
         }
 

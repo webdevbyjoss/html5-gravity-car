@@ -24,8 +24,12 @@ define(function(){
 	    this.obj = this.world.b2world.CreateBody(bodyDef);
 	    this.fixture = this.obj.CreateFixture(fixDef);
 
-	    // build visual representation
-	   	var geometry = new THREE.CubeGeometry(data.box.w, data.box.h, 3);
+	    // Calculate varying road width using sine wave (1-5 meters)
+	    // Use x position to create a gradual change along the road
+	    var roadWidth = calculateVaryingWidth(data.pos.x);
+	    
+	    // build visual representation with varying width
+	   	var geometry = new THREE.CubeGeometry(data.box.w, data.box.h, roadWidth);
 		var material = new THREE.MeshLambertMaterial( { color: 0x75A3FF } );
 		var cube = new THREE.Mesh( geometry, material );
 		world.scene.add( cube );
@@ -40,6 +44,17 @@ define(function(){
 		// console.log(this.bodyDef2);
 		this.update = function() {
 			// do nothing for now as platforms are completely unmovable
+		}
+		
+		// Function to calculate the varying width using a sine wave
+		function calculateVaryingWidth(xPosition) {
+			// Using sine function to oscillate between minimum and maximum values
+			// Period control - adjust the 0.05 value to change how quickly the width varies
+			var sinValue = Math.sin(0.05 * xPosition);
+			
+			// Scale and shift the sine wave to get values between 3 and 10
+			// sin returns values between -1 and 1, so we scale by 3.5 and shift by 6.5 to get 3-10 range
+			return 6.5 + 3.5 * sinValue;
 		}
 	}
 })
