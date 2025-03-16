@@ -15,11 +15,11 @@ define(function(){
 
         // motor 
         var motorSpeed = 1;
-        var motorTorque = 15;
+        var motorTorque = 30;
 
         // manual stabilization force
-        var torqueForce = 0.5;
-        var stabilizationForce = 0.5;
+        var torqueForce = 1;
+        var stabilizationForce = 1;
 
 
   	    var fixDef = Object.create(this.world.fixDef);
@@ -29,9 +29,9 @@ define(function(){
   	    var bodyDef = new b2BodyDef;
 
         //create car body
-        fixDef.density = 0.8;
+        fixDef.density = 1;
         fixDef.friction = 0.5;
-        fixDef.restitution = 0.01;
+        fixDef.restitution = 0.02;
         fixDef.filter.groupIndex = -1;
 
         fixDef.shape = new b2PolygonShape();
@@ -122,9 +122,6 @@ define(function(){
         revoluteJ.enableMotor = true;
         revoluteJ.Initialize(axle2, this.wheel2, this.wheel2.GetWorldCenter());
         this.motor2 = this.world.b2world.CreateJoint(revoluteJ);
-
-
-
 
 
 

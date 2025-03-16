@@ -1,8 +1,48 @@
-HTML5 Gravity Car
-=================
+# HTML5 Gravity Car
 
-WebGL/Three.JS + Box2Dweb playable demo
+A physics-based HTML5 car driving game where you can drive a car through procedurally generated hills.
 
-Availble in 2D and 3D modes (see appropriate branch)
+## Live Demo
 
-Demo may be found here: https://dl.dropboxusercontent.com/u/991552/box2d/www/index.html
+You can play the game online at: https://[your-username].github.io/html5-gravity-car/
+
+## Controls
+
+- **A** - Brake/Reverse
+- **D** - Accelerate
+- **R** - Restart (if car is flipped)
+- **Full Screen** button - Toggle fullscreen mode
+
+## Features
+
+- Physics-based car movement with realistic suspension
+- Procedurally generated terrain
+- Real-time physics visualization
+- Responsive design that works on various screen sizes
+
+## Technologies Used
+
+- HTML5 Canvas
+- WebGL (Three.js)
+- Box2D Physics Engine
+- RequireJS for module loading
+
+## Local Development
+
+To run the game locally:
+
+1. Clone this repository
+2. Open `index.html` in your browser
+
+## Deployment
+
+This project is set up for GitHub Pages using the `/docs` folder method:
+
+1. All the necessary files are symlinked in the `/docs` folder
+2. When you push to GitHub, enable GitHub Pages in repository settings
+3. Select the `main` branch and `/docs` folder as the source
+4. Your game will be available at `https://[your-username].github.io/html5-gravity-car/`
+
+## License
+
+See the [LICENSE](LICENSE) file for details.

@@ -5,7 +5,7 @@ define(function(){
 	    var fixDef = Object.create(this.world.fixDef);
 	    var bodyDef = new b2BodyDef;
 	    bodyDef.type = b2Body.b2_dynamicBody;
-	    fixDef.density = 1;
+	    fixDef.density = 0.01;
 	    fixDef.friction = 0.2;
 	    fixDef.restitution = 0.5;
 

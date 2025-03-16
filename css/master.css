@@ -1,7 +1,174 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
 canvas {
 	border:1px solid silver;
 	margin:auto;
 	display: block;
+}
+
+/* Update styles for main canvas to fill viewport */
+#main {
+	width: 100%;
+	height: 100vh;
+	margin: 0;
+	padding: 0;
+	border: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	display: block;
+}
+
+/* Style for debug canvas container in top right */
+.debug-container {
+	position: fixed;
+	top: 10px;
+	right: 10px;
+	z-index: 10;
+	background-color: rgba(0, 0, 0, 0.7);
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.debug-title {
+	background-color: rgba(0, 0, 0, 0.8);
+	color: white;
+	padding: 5px 10px;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Style for debug canvas positioned in debug container */
+#gravity-debug {
+	border: none;
+	background-color: rgba(255, 255, 255, 0.9);
+	display: block;
+}
+
+/* Enhanced styles for controls panel */
+.controls {
+	position: fixed;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 10;
+	background-color: rgba(0, 0, 0, 0.7);
+	padding: 10px 15px;
+	border-radius: 8px;
+	color: white;
+	font-size: 14px;
+	text-align: center;
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+	max-width: 95%;
+	width: auto;
+	min-width: 320px;
+}
+
+.controls h3 {
+	margin: 0 0 10px 0;
+	font-size: 18px;
+	color: #fff;
+	text-align: center;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.control-group {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	gap: 15px;
+	margin-bottom: 5px;
+	flex-wrap: wrap;
+}
+
+.control-column {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 5px;
+}
+
+.speed-display {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+}
+
+.speed-display label {
+	font-weight: bold;
+	white-space: nowrap;
+}
+
+.speed-display input {
+	background-color: rgba(255, 255, 255, 0.9);
+	border: none;
+	border-radius: 4px;
+	padding: 5px 8px;
+	width: 75px;
+	text-align: center;
+	font-family: monospace;
+	font-weight: bold;
+}
+
+.key-controls {
+	display: flex;
+	justify-content: center;
+	gap: 15px;
+	flex-wrap: wrap;
+}
+
+.key-item {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	white-space: nowrap;
+}
+
+.key {
+	display: inline-block;
+	background-color: rgba(255, 255, 255, 0.9);
+	color: #333;
+	font-weight: bold;
+	padding: 4px 8px;
+	border-radius: 4px;
+	min-width: 15px;
+	text-align: center;
+	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+button#full-screen {
+	background-color: #4285f4;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	padding: 6px 12px;
+	cursor: pointer;
+	font-weight: bold;
+	white-space: nowrap;
+	transition: background-color 0.2s;
+}
+
+button#full-screen:hover {
+	background-color: #2a75f3;
+}
+
+.instructions {
+	font-size: 12px;
+	opacity: 0.8;
+	margin-top: 5px;
 }
 
 canvas:full-screen {
@@ -10,4 +177,56 @@ canvas:full-screen {
 
 canvas:-webkit-full-screen {
 	width: 100% !important;
+}
+
+/* For very small screens, adjust the layout */
+@media (max-width: 480px) {
+	.control-group {
+		flex-direction: column;
+		gap: 8px;
+	}
+	
+	.control-column {
+		margin: 3px 0;
+	}
+	
+	.controls {
+		min-width: auto;
+		width: 85%;
+	}
+}
+
+/* Stats panel for distance and high score */
+.stats-panel {
+	position: fixed;
+	top: 10px;
+	left: 10px;
+	z-index: 10;
+	background-color: rgba(0, 0, 0, 0.7);
+	border-radius: 8px;
+	padding: 10px 15px;
+	color: white;
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.stat-item {
+	margin: 5px 0;
+	display: flex;
+	align-items: center;
+}
+
+.stat-label {
+	font-weight: bold;
+	margin-right: 8px;
+	font-size: 14px;
+}
+
+.stat-value {
+	font-family: monospace;
+	font-size: 16px;
+	background-color: rgba(255, 255, 255, 0.1);
+	padding: 3px 8px;
+	border-radius: 4px;
+	min-width: 80px;
+	text-align: right;
 }

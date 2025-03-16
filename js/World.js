@@ -13,10 +13,22 @@ define([
 		// init WebGL
 	    this.glDomElem = document.getElementById("main");
 	    this.scene = new THREE.Scene();
-	    this.camera = new THREE.PerspectiveCamera( 55, this.glDomElem.width / this.glDomElem.height, 0.1, 1000 );
+	    this.camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 0.1, 1000 );
 	    this.renderer = new THREE.WebGLRenderer({
-	    	canvas: this.glDomElem
+	    	canvas: this.glDomElem,
+	    	antialias: true
 	    });
+        // Set renderer to use the full canvas size
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        
+        // Add resize handler to update camera aspect ratio and renderer size
+        var self = this;
+        window.addEventListener('resize', function() {
+            self.camera.aspect = window.innerWidth / window.innerHeight;
+            self.camera.updateProjectionMatrix();
+            self.renderer.setSize(window.innerWidth, window.innerHeight, false);
+        });
+        
 		this.camera.position.x = 30;
 		this.camera.position.y = 30;
 		this.camera.position.z = -15;
@@ -24,6 +36,16 @@ define([
 		this.camera.rotation.y = Math.PI;
 
 		var debugElem = document.getElementById('cam');
+		var distanceElem = document.getElementById('distance');
+		var highScoreElem = document.getElementById('high-score');
+		
+		// Initialize distance tracking
+		this.startPosition = null;
+		this.currentDistance = 0;
+		this.highScore = localStorage.getItem('gravityCarHighScore') || 0;
+		
+		// Display the high score from localStorage
+		highScoreElem.textContent = Math.floor(this.highScore) + ' m';
 
 		// add subtle blue ambient lighting
 		var ambientLight = new THREE.AmbientLight(0x004444);
@@ -82,10 +104,35 @@ define([
 	    	this.car.update(input);
 
 	    	// update camera position according to car body
-	    	var pos =  this.car.carBody.GetPosition();
-
+	    	var pos = this.car.carBody.GetPosition();
+			
+			// Track distance
+			if (!this.startPosition) {
+				this.startPosition = { x: pos.x, y: pos.y };
+			}
+			
+			// Calculate the distance between starting position and current position
+			this.currentDistance = Math.sqrt(
+				Math.pow(pos.x - this.startPosition.x, 2) + 
+				Math.pow(pos.y - this.startPosition.y, 2)
+			);
+			
+			// Update distance display
+			distanceElem.textContent = Math.floor(this.currentDistance) + ' m';
+			
+			// Check if this is a new high score
+			if (this.currentDistance > this.highScore) {
+				this.highScore = this.currentDistance;
+				highScoreElem.textContent = Math.floor(this.highScore) + ' m';
+				// Save the new high score to localStorage
+				localStorage.setItem('gravityCarHighScore', this.highScore);
+			}
+			
+			// No need to check for more road generation since we generate 10km at the start
+			
 			var velmodule = this.car.getSpeed();
-			debugElem.value = velmodule;
+			// Format the speed to be more readable and informative
+			debugElem.value = velmodule.toFixed(2) + ' m/s';
 
 			// update acmera Z coordinate softly
 			var cameraTargetZ = -10 - (velmodule * 0.5);
@@ -106,6 +153,12 @@ define([
 			// output some debug on SPACE
 			if (input.getKeyDown(input.keyCode.SPACE)) {
 
+			}
+
+			// Check for restart (R key)
+			if (input.getKeyDown(input.keyCode.R)) {
+				// Reload the page to restart the game with a new random seed
+				window.location.href = window.location.pathname;
 			}
 	    };
 

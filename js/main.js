@@ -11,6 +11,22 @@ requirejs.config({
     }
 });
 
+// Function to handle canvas resizing
+function resizeCanvas() {
+    var canvas = document.getElementById('main');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Force GPU rendering for better performance
+    canvas.style.transform = 'translateZ(0)';
+}
+
+// Add resize event listener
+window.addEventListener('resize', resizeCanvas);
+// Initialize canvas size on load
+window.addEventListener('load', resizeCanvas);
+// Also call immediately to ensure proper sizing from the start
+resizeCanvas();
 
 function requestFullscreen(elem) {
     if (elem.requestFullscreen) {
@@ -58,6 +74,7 @@ window.cancelRequestAnimFrame = (function () {
         D: 68,
         W: 87,
         S: 83,
+        R: 82,
         ARROW_RIGHT: 39,
         ARROW_LEFT: 37,
         ARROW_UP: 38,
